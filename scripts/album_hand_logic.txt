@@ -1,0 +1,155 @@
+# Album Hand Logic for UMG Track Battle
+
+## Overview
+This document outlines the logic for selecting the 12 most recently played albums/EPs for a player's hand in the UMG Track Battle game.
+
+## Data Source
+The player's hand will be generated from their Spotify listening history using the Spotify Web API.
+
+## API Endpoints Required
+1. **Authorization**: OAuth 2.0 authentication flow to get user permission
+   - Scope required: `user-read-recently-played`
+   - Reference: https://developer.spotify.com/documentation/web-api/concepts/authorization
+
+2. **Get Recently Played Tracks**:
+   - Endpoint: `GET https://api.spotify.com/v1/me/player/recently-played`
+   - Returns up to 50 most recently played tracks
+   - Reference: https://developer.spotify.com/documentation/web-api/reference/get-recently-played
+
+3. **Get Album Information**:
+   - Endpoint: `GET https://api.spotify.com/v1/albums/{id}`
+   - Used to get full album details including all tracks
+   - Reference: https://developer.spotify.com/documentation/web-api/reference/get-an-album
+
+## Album Hand Selection Logic
+
+1. **Fetch Recently Played Tracks**:
+   - Request the 50 most recently played tracks from the user's history
+   - This is the maximum allowed by the Spotify API in a single request
+
+2. **Extract Unique Albums/EPs**:
+   - For each track, extract the album ID and album type
+   - Filter for only albums and EPs (exclude singles and compilations if desired)
+   - Create a map of unique albums with their most recent play timestamp
+
+3. **Sort by Recency**:
+   - Sort the unique albums by the most recent play timestamp
+   - This ensures the 12 most recently played albums are selected
+
+4. **Select Top 12 Albums**:
+   - Take the first 12 albums from the sorted list
+   - If fewer than 12 albums are available, use all available albums
+
+5. **Fetch Complete Album Data**:
+   - For each selected album ID, fetch the complete album information
+   - This provides all tracks and metadata needed for gameplay
+
+6. **Handle Partial Plays**:
+   - As specified in the requirements, include albums even if only partially played
+   - An album is considered "played" if the user has listened to at least one track from it
+
+7. **Fallback Logic**:
+   - If a user has fewer than 12 recently played albums/EPs:
+     - Option 1: Fill remaining slots with popular UMG albums
+     - Option 2: Allow playing with fewer albums
+     - Option 3: Prompt user to listen to more music before playing
+
+## Implementation Considerations
+
+1. **Caching**:
+   - Cache album data to reduce API calls
+   - Update cache when user starts a new game
+
+2. **API Rate Limits**:
+   - Spotify API has rate limits that must be respected
+   - Implement exponential backoff for retries
+
+3. **Album Type Filtering**:
+   - Spotify categorizes releases as "album", "single", "compilation", or "EP"
+   - For UMG Track Battle, focus on "album" and "EP" types
+
+4. **Error Handling**:
+   - Handle cases where API returns errors
+   - Provide fallback options when data cannot be retrieved
+
+## Example Implementation Pseudocode
+
+```javascript
+async function getUserAlbumHand() {
+  // 1. Get user's recently played tracks
+  const recentTracks = await spotifyApi.getMyRecentlyPlayedTracks({ limit: 50 });
+  
+  // 2. Extract unique albums with timestamps
+  const albumMap = new Map();
+  recentTracks.items.forEach(item => {
+    const { album, played_at } = item.track.album;
+    
+    // Only consider albums and EPs
+    if (album.album_type === 'album' || album.album_type === 'EP') {
+      // If this album isn't in our map or this play is more recent, update it
+      if (!albumMap.has(album.id) || new Date(played_at) > albumMap.get(album.id).timestamp) {
+        albumMap.set(album.id, {
+          id: album.id,
+          timestamp: new Date(played_at),
+          name: album.name,
+          artist: album.artists[0].name,
+          albumType: album.album_type
+        });
+      }
+    }
+  });
+  
+  // 3. Sort albums by recency
+  const sortedAlbums = Array.from(albumMap.values())
+    .sort((a, b) => b.timestamp - a.timestamp);
+  
+  // 4. Select top 12 albums
+  const selectedAlbums = sortedAlbums.slice(0, 12);
+  
+  // 5. Fetch complete album data for each selected album
+  const albumHand = await Promise.all(
+    selectedAlbums.map(async album => {
+      const fullAlbumData = await spotifyApi.getAlbum(album.id);
+      return {
+        id: fullAlbumData.id,
+        title: fullAlbumData.name,
+        artist: fullAlbumData.artists[0].name,
+        releaseDate: fullAlbumData.release_date,
+        coverArt: fullAlbumData.images[0].url,
+        tracks: fullAlbumData.tracks.items.map(track => ({
+          id: track.id,
+          title: track.name,
+          duration: track.duration_ms,
+          // These fields would need to be fetched from additional API calls
+          // or from a backend database with pre-populated data
+          billboardRank: null, // To be populated from Billboard data
+          spotifyPlays: null,  // To be populated from Spotify data if available
+          releaseDate: fullAlbumData.release_date, // Using album release date as fallback
+          isExplicit: track.explicit,
+          popularity: track.popularity
+        }))
+      };
+    })
+  );
+  
+  // 6. Handle case where user has fewer than 12 albums
+  if (albumHand.length < 12) {
+    // Implement fallback logic here
+    // For MVP, could use static popular UMG albums to fill the hand
+  }
+  
+  return albumHand;
+}
+```
+
+## Limitations and Considerations
+
+1. **Limited History**: Spotify API only provides the 50 most recently played tracks, which may not cover 12 unique albums for all users.
+
+2. **Missing Data**: Billboard rankings and exact play counts may not be available through the Spotify API and might require additional data sources.
+
+3. **API Latency**: Fetching all required data may introduce latency when starting a game.
+
+4. **User Privacy**: Ensure proper consent is obtained for accessing user listening history.
+
+5. **Album Diversity**: Users who repeatedly listen to the same albums may have less diversity in their hand.

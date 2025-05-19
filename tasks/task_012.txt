@@ -1,0 +1,106 @@
+# Task ID: 12
+# Title: Implement Track Comparison Logic
+# Status: pending
+# Dependencies: 6
+# Priority: high
+# Description: Develop the logic to compare two tracks based on the selected challenge category and determine the winner.
+# Details:
+Implement the track comparison logic for all five challenge categories:
+
+1. Top Chart Rank: Compare chart positions (lower is better)
+2. Most Plays: Compare Spotify play counts (higher is better)
+3. Least Plays: Compare Spotify play counts (lower is better)
+4. Oldest Track: Compare release dates (earlier is better)
+5. Newest Track: Compare release dates (later is better)
+
+```javascript
+const compareTracksByCategory = (playerTrack, computerTrack, category) => {
+  switch (category.id) {
+    case 'chart_rank': {
+      // Lower chart position is better
+      const playerRank = playerTrack.chartPosition || Infinity;
+      const computerRank = computerTrack.chartPosition || Infinity;
+      
+      if (playerRank < computerRank) return { winner: 'player', reason: `${playerTrack.name} reached #${playerRank} vs #${computerRank}` };
+      if (computerRank < playerRank) return { winner: 'computer', reason: `${computerTrack.name} reached #${computerRank} vs #${playerRank}` };
+      return { winner: 'tie', reason: 'Both tracks reached the same chart position' };
+    }
+    
+    case 'most_plays': {
+      const playerPlays = playerTrack.playCount;
+      const computerPlays = computerTrack.playCount;
+      
+      if (playerPlays > computerPlays) return { winner: 'player', reason: `${playerTrack.name} has ${formatNumber(playerPlays)} plays vs ${formatNumber(computerPlays)}` };
+      if (computerPlays > playerPlays) return { winner: 'computer', reason: `${computerTrack.name} has ${formatNumber(computerPlays)} plays vs ${formatNumber(playerPlays)}` };
+      return { winner: 'tie', reason: 'Both tracks have the same number of plays' };
+    }
+    
+    case 'least_plays': {
+      const playerPlays = playerTrack.playCount;
+      const computerPlays = computerTrack.playCount;
+      
+      if (playerPlays < computerPlays) return { winner: 'player', reason: `${playerTrack.name} has only ${formatNumber(playerPlays)} plays vs ${formatNumber(computerPlays)}` };
+      if (computerPlays < playerPlays) return { winner: 'computer', reason: `${computerTrack.name} has only ${formatNumber(computerPlays)} plays vs ${formatNumber(playerPlays)}` };
+      return { winner: 'tie', reason: 'Both tracks have the same number of plays' };
+    }
+    
+    case 'oldest': {
+      const playerDate = new Date(playerTrack.releaseDate);
+      const computerDate = new Date(computerTrack.releaseDate);
+      
+      if (playerDate < computerDate) return { winner: 'player', reason: `${playerTrack.name} was released on ${formatDate(playerDate)} vs ${formatDate(computerDate)}` };
+      if (computerDate < playerDate) return { winner: 'computer', reason: `${computerTrack.name} was released on ${formatDate(computerDate)} vs ${formatDate(playerDate)}` };
+      return { winner: 'tie', reason: 'Both tracks were released on the same date' };
+    }
+    
+    case 'newest': {
+      const playerDate = new Date(playerTrack.releaseDate);
+      const computerDate = new Date(computerTrack.releaseDate);
+      
+      if (playerDate > computerDate) return { winner: 'player', reason: `${playerTrack.name} was released on ${formatDate(playerDate)} vs ${formatDate(computerDate)}` };
+      if (computerDate > playerDate) return { winner: 'computer', reason: `${computerTrack.name} was released on ${formatDate(computerDate)} vs ${formatDate(playerDate)}` };
+      return { winner: 'tie', reason: 'Both tracks were released on the same date' };
+    }
+    
+    default:
+      return { winner: 'tie', reason: 'Invalid category' };
+  }
+};
+```
+
+Implement helper functions for formatting numbers and dates to improve readability of comparison results.
+
+# Test Strategy:
+Create unit tests for each comparison category with various scenarios including clear wins, ties, and edge cases (missing data, extreme values). Test with mock track data that covers all possible comparison outcomes. Verify that the comparison logic correctly identifies winners and provides meaningful explanations.
+
+# Subtasks:
+## 1. Implement formatNumber helper function [pending]
+### Dependencies: None
+### Description: Create a helper function to format play count numbers with appropriate separators and abbreviations for better readability in comparison results.
+### Details:
+Implement the formatNumber function that takes a number and returns a formatted string. For large numbers (millions+), use abbreviations like '1.2M'. For smaller numbers, use comma separators. Handle edge cases like null or undefined values by returning a default string.
+
+## 2. Implement formatDate helper function [pending]
+### Dependencies: None
+### Description: Create a helper function to format release dates in a consistent, readable format for comparison results.
+### Details:
+Implement the formatDate function that takes a Date object and returns a formatted string in a user-friendly format (e.g., 'January 1, 2020'). Handle invalid dates and ensure consistent output regardless of input date format. Consider using Intl.DateTimeFormat for localization support.
+
+## 3. Implement chart rank and play count comparison logic [pending]
+### Dependencies: 12.1
+### Description: Complete the implementation of the comparison logic for chart rank, most plays, and least plays categories.
+### Details:
+Refine the existing switch cases for 'chart_rank', 'most_plays', and 'least_plays'. Ensure proper handling of edge cases like missing chart positions or play counts. Use the formatNumber helper function to format play counts in the reason messages. Add appropriate comments to explain the comparison logic.
+
+## 4. Implement release date comparison logic [pending]
+### Dependencies: 12.2
+### Description: Complete the implementation of the comparison logic for oldest and newest track categories.
+### Details:
+Refine the existing switch cases for 'oldest' and 'newest'. Ensure proper date parsing and comparison. Handle edge cases like missing release dates or invalid date formats. Use the formatDate helper function to format dates in the reason messages. Add appropriate comments to explain the date comparison logic.
+
+## 5. Integrate and test the complete comparison function [pending]
+### Dependencies: 12.1, 12.2, 12.3, 12.4
+### Description: Finalize the compareTracksByCategory function by integrating all comparison logic and ensuring it handles all edge cases.
+### Details:
+Review and refine the entire compareTracksByCategory function. Ensure consistent return object structure across all categories. Add input validation to check that both tracks and the category are valid before attempting comparison. Add comprehensive error handling. Optimize the code for readability and performance. Consider adding a debug mode that provides more detailed comparison information.
+

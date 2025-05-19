@@ -1,0 +1,120 @@
+# Task ID: 16
+# Title: Implement Game Over Screen
+# Status: pending
+# Dependencies: 15
+# Priority: medium
+# Description: Create a game over screen that displays the final result and offers options to play again or return to the home screen.
+# Details:
+Implement the game over screen with the following features:
+
+1. Display final score and winner announcement
+2. Show game statistics (categories played, most successful category)
+3. Provide options to play again or return to home screen
+4. Visual celebration for player wins
+
+```jsx
+const GameOverScreen = ({ winner }) => {
+  const { state, dispatch } = useGameContext();
+  const { playerScore, computerScore, gameHistory } = state;
+  
+  const handlePlayAgain = () => {
+    dispatch({ type: 'RESET_GAME' });
+  };
+  
+  const calculateStats = () => {
+    // Calculate most successful category for player
+    const categoryCounts = {};
+    const categoryWins = {};
+    
+    gameHistory.forEach(turn => {
+      const categoryId = turn.category.id;
+      categoryCounts[categoryId] = (categoryCounts[categoryId] || 0) + 1;
+      
+      if (turn.winner === 'player') {
+        categoryWins[categoryId] = (categoryWins[categoryId] || 0) + 1;
+      }
+    });
+    
+    let bestCategory = null;
+    let bestWinRate = 0;
+    
+    Object.keys(categoryCounts).forEach(categoryId => {
+      const winRate = categoryWins[categoryId] / categoryCounts[categoryId] || 0;
+      if (winRate > bestWinRate) {
+        bestWinRate = winRate;
+        bestCategory = categoryId;
+      }
+    });
+    
+    return {
+      totalRounds: gameHistory.length,
+      bestCategory: bestCategory,
+      bestCategoryName: categories.find(c => c.id === bestCategory)?.name || 'None',
+      bestCategoryWinRate: Math.round(bestWinRate * 100)
+    };
+  };
+  
+  const stats = calculateStats();
+  
+  return (
+    <GameOverContainer winner={winner === 'player'}>
+      <GameOverHeader>
+        {winner === 'player' ? '🎉 You Win! 🎉' : 'Game Over'}
+      </GameOverHeader>
+      
+      <FinalScore>
+        <PlayerFinalScore>You: {playerScore}</PlayerFinalScore>
+        <ComputerFinalScore>Computer: {computerScore}</ComputerFinalScore>
+      </FinalScore>
+      
+      <GameStats>
+        <h3>Game Statistics</h3>
+        <StatItem>Total Rounds: {stats.totalRounds}</StatItem>
+        <StatItem>Your Best Category: {stats.bestCategoryName} ({stats.bestCategoryWinRate}% win rate)</StatItem>
+      </GameStats>
+      
+      <GameOverControls>
+        <PlayAgainButton onClick={handlePlayAgain}>Play Again</PlayAgainButton>
+        <HomeButton onClick={() => navigate('/')}>Home</HomeButton>
+      </GameOverControls>
+    </GameOverContainer>
+  );
+};
+```
+
+Implement confetti animation for player wins using a library like `react-confetti`.
+
+# Test Strategy:
+Test the game over screen with different game outcomes (player win, computer win). Verify that statistics are calculated and displayed correctly. Test the play again functionality to ensure it properly resets the game state. Ensure the screen is visually appealing and provides clear feedback on the game result.
+
+# Subtasks:
+## 1. Create GameOverScreen Component Structure [pending]
+### Dependencies: None
+### Description: Set up the basic structure of the GameOverScreen component with proper styling and layout.
+### Details:
+Create the GameOverScreen component with styled components for GameOverContainer, GameOverHeader, FinalScore, GameStats, and GameOverControls. Implement responsive design for different screen sizes. Set up the component to receive the winner prop and access game state through useGameContext.
+
+## 2. Implement Score Display and Winner Announcement [pending]
+### Dependencies: None
+### Description: Display the final score and winner announcement with appropriate styling.
+### Details:
+Create the FinalScore component with PlayerFinalScore and ComputerFinalScore styled components. Implement conditional styling based on the winner (player or computer). Add a prominent header announcing the winner with appropriate text and styling.
+
+## 3. Develop Game Statistics Calculation and Display [pending]
+### Dependencies: None
+### Description: Calculate and display game statistics including total rounds played, most successful category, and win rate.
+### Details:
+Implement the calculateStats function to analyze gameHistory data. Calculate total rounds played, identify the player's best category, and determine win rate for that category. Create styled StatItem components to display these statistics in a clear, readable format.
+
+## 4. Add Play Again and Home Navigation Controls [pending]
+### Dependencies: None
+### Description: Implement buttons for playing again or returning to the home screen with appropriate actions.
+### Details:
+Create PlayAgainButton and HomeButton styled components. Implement handlePlayAgain function to dispatch a RESET_GAME action to the game context. Add navigation functionality to return to the home screen using React Router's navigate function. Ensure buttons have appropriate hover and active states.
+
+## 5. Implement Confetti Animation for Player Wins [pending]
+### Dependencies: None
+### Description: Add a celebratory confetti animation that displays when the player wins the game.
+### Details:
+Install and integrate the react-confetti library. Create a conditional rendering of the Confetti component that only appears when winner === 'player'. Configure the confetti with appropriate settings for density, colors, and duration. Ensure the animation doesn't interfere with other UI elements.
+

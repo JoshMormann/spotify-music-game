@@ -1,0 +1,159 @@
+# Task ID: 7
+# Title: Design Skeuomorphic UI Components
+# Status: pending
+# Dependencies: 1
+# Priority: medium
+# Description: Create reusable UI components with a skeuomorphic design that resembles physical objects like album covers, turntables, and wooden surfaces.
+# Details:
+Develop a set of styled components with skeuomorphic design:
+
+1. Album Shelf Component:
+```javascript
+const AlbumShelf = styled.div`
+  background-image: url(${woodTexture});
+  border-radius: 8px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
+    border-radius: 8px 8px 0 0;
+  }
+`;
+```
+
+2. Album Cover Component with 3D effect:
+```javascript
+const AlbumCover = styled.div`
+  width: 150px;
+  height: 150px;
+  background-image: url(${props => props.coverUrl});
+  background-size: cover;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
+    border-radius: 2px;
+  }
+  
+  &:hover {
+    transform: translateY(-10px) rotateY(-5deg);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+  }
+`;
+```
+
+3. Turntable Component with spinning animation:
+```javascript
+const Turntable = styled.div`
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background-color: #333;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    background-color: #888;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+`;
+
+const Vinyl = styled.div`
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #000 0%, #333 100%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ${props => props.isPlaying ? 'spin 5s linear infinite' : 'none'};
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    background-image: url(${props => props.albumCover});
+    background-size: cover;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  @keyframes spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+`;
+```
+
+Create additional components for:
+- Wooden game table surface
+- Challenge category cards
+- Score display with vintage counter style
+- Game history log with paper texture
+
+# Test Strategy:
+Create a Storybook instance to visually test each component in isolation. Test components across different screen sizes to ensure responsive behavior. Verify animations and transitions work smoothly across different browsers. Conduct user testing to ensure the skeuomorphic design is intuitive and visually appealing.
+
+# Subtasks:
+## 1. Create Wooden Surface Components [pending]
+### Dependencies: None
+### Description: Develop reusable wooden surface components that will serve as backgrounds for various UI elements, including the album shelf and game table.
+### Details:
+Implement styled components with realistic wood textures using background images and CSS effects. Create at least two variations: a light wood texture for the album shelf and a darker wood texture for the game table. Use box-shadow, linear-gradient, and border-radius to create depth and realistic lighting effects. Export these as reusable components that accept customization props like woodType, shadowIntensity, and borderStyle.
+
+## 2. Implement Album and Music Components [pending]
+### Dependencies: 7.1
+### Description: Create the album shelf, album cover, and vinyl components with realistic 3D effects and animations.
+### Details:
+Refine the existing AlbumShelf component to use the wooden surface component. Enhance the AlbumCover component with more realistic edge and spine details. Implement the Turntable and Vinyl components with proper spinning animations and realistic reflections. Add subtle hover and active state animations that mimic physical interactions. Ensure all components are responsive and maintain their skeuomorphic appearance at different sizes.
+
+## 3. Design Game Card Components [pending]
+### Dependencies: 7.1
+### Description: Create skeuomorphic challenge category cards with realistic paper textures and physical card characteristics.
+### Details:
+Implement styled card components that resemble physical playing cards with slightly rounded corners, subtle edge highlights, and paper textures. Add realistic shadows that change on hover to simulate picking up the card. Include a flip animation that reveals card details on the back. Create variations for different game categories with distinct visual styles while maintaining a cohesive design language. Make cards stackable in a way that shows depth.
+
+## 4. Develop Vintage Score Display Components [pending]
+### Dependencies: 7.1
+### Description: Create skeuomorphic score display components that resemble vintage mechanical counters and gauges.
+### Details:
+Implement a VintageCounter component that mimics mechanical number counters with rolling digit animations. Create a ScoreGauge component that resembles an analog meter with a moving needle. Use CSS transforms and transitions to create realistic mechanical movements. Add subtle reflections on glass-like surfaces and metallic textures for frames. Include sound effect hooks that can be optionally enabled to enhance the mechanical feel.
+
+## 5. Create Game History Log Component [pending]
+### Dependencies: 7.1, 7.4
+### Description: Implement a skeuomorphic game history log that resembles a vintage paper notebook or ledger.
+### Details:
+Create a GameHistoryLog component with a realistic paper texture background and subtle aging effects on edges. Implement lined paper styling with proper text alignment. Add a scrolling mechanism that mimics turning pages rather than standard scrolling. Include subtle ink effects for text entries that make them appear handwritten or stamped. Integrate with the score display components to show historical score entries. Add the ability to "tear out" or archive old entries with appropriate animations.
+

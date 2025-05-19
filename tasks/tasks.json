@@ -1,0 +1,1318 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Setup React Project Structure",
+      "description": "Initialize the React project with appropriate folder structure and essential dependencies for the UMG Track Battle game.",
+      "details": "Create a new React project using Create React App or Vite.\n\nInstall essential dependencies:\n- react-router-dom for navigation\n- axios for API requests\n- styled-components for styling\n\nSet up folder structure:\n```\nsrc/\n  components/\n    common/\n    game/\n    auth/\n  contexts/\n  hooks/\n  services/\n    spotify/\n  utils/\n  assets/\n    images/\n    styles/\n  pages/\n```\n\nConfigure basic routing and create placeholder components for main pages.",
+      "testStrategy": "Verify project builds successfully without errors. Ensure all dependencies are correctly installed and imported. Test basic navigation between placeholder pages.",
+      "priority": "high",
+      "dependencies": [],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Initialize React Project with Build Tools",
+          "description": "Set up a new React project using Vite for faster development experience and install core dependencies.",
+          "dependencies": [],
+          "details": "Run `npm create vite@latest umg-track-battle -- --template react-ts` to create a new React project with TypeScript support. After initialization, navigate to the project directory and install core dependencies with `npm install react-router-dom axios styled-components`. Update the package.json with appropriate project metadata and scripts.",
+          "status": "pending",
+          "testStrategy": "Verify the project builds successfully with `npm run dev` and check that all installed dependencies are correctly listed in package.json."
+        },
+        {
+          "id": 2,
+          "title": "Create Folder Structure and Base Files",
+          "description": "Establish the recommended folder structure and create essential base files for the application.",
+          "dependencies": [
+            1
+          ],
+          "details": "Create all directories as specified in the folder structure. Add placeholder index.js/ts files in each directory to maintain structure in git. Create base configuration files like .gitignore, .eslintrc, and tsconfig.json. Set up a global styles file in assets/styles with CSS reset and common variables.",
+          "status": "pending",
+          "testStrategy": "Ensure all directories are created correctly and base files are in place. Verify that import paths work correctly by creating a simple import test file."
+        },
+        {
+          "id": 3,
+          "title": "Configure Routing and Layout Components",
+          "description": "Set up React Router configuration and create layout components for consistent UI structure.",
+          "dependencies": [
+            2
+          ],
+          "details": "Create a router configuration in src/App.tsx using react-router-dom v6. Implement layout components in components/common including Header, Footer, and MainLayout. Create placeholder page components in the pages directory for Home, Game, Profile, and NotFound. Configure routes to render these pages within the appropriate layouts.",
+          "status": "pending",
+          "testStrategy": "Test navigation between routes manually. Verify that layouts are applied consistently across pages and that the router handles invalid routes correctly."
+        },
+        {
+          "id": 4,
+          "title": "Implement Context Providers and Service Layer",
+          "description": "Create context providers for global state management and service layer for API interactions.",
+          "dependencies": [
+            2
+          ],
+          "details": "Create an AuthContext in contexts/ for managing user authentication state. Implement a SpotifyService in services/spotify/ with methods for API interactions. Create utility functions in utils/ for common operations like data formatting and validation. Set up a basic error handling mechanism for API requests.",
+          "status": "pending",
+          "testStrategy": "Write unit tests for utility functions. Create mock implementations of service methods to test context providers without actual API calls."
+        },
+        {
+          "id": 5,
+          "title": "Develop Common UI Components and Styling System",
+          "description": "Create reusable UI components and establish a consistent styling system using styled-components.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "Implement common UI components in components/common/ including Button, Input, Card, and Modal. Create a theme configuration for styled-components with color palette, typography, spacing, and breakpoints. Develop a set of mixins and helper functions for responsive design. Apply the styling system to layout components created earlier.",
+          "status": "pending",
+          "testStrategy": "Create a component playground page to visually test all common components. Verify responsive behavior by testing at different viewport sizes."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Implement Spotify OAuth Authentication",
+      "description": "Implement Spotify OAuth 2.0 authentication flow to allow users to log in with their Spotify credentials and authorize access to their listening history.",
+      "details": "1. Register the application with Spotify Developer Dashboard\n2. Obtain client ID and set redirect URI\n3. Implement authentication flow:\n   - Create login button that redirects to Spotify authorization URL\n   - Request 'user-read-recently-played' scope\n   - Handle redirect with authorization code\n   - Exchange code for access token\n   - Store tokens securely in localStorage\n   - Implement token refresh mechanism\n\nCode example for authorization URL:\n```javascript\nconst authEndpoint = 'https://accounts.spotify.com/authorize';\nconst redirectUri = 'http://localhost:3000/callback';\nconst clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;\nconst scopes = ['user-read-recently-played'];\n\nconst loginUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code&show_dialog=true`;\n```",
+      "testStrategy": "Test the full authentication flow manually. Verify tokens are correctly stored and refreshed. Create mock tests for authentication service functions. Test error handling for failed authentication attempts and token refresh failures.",
+      "priority": "high",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set up Spotify Developer credentials",
+          "description": "Register the application with Spotify Developer Dashboard and configure environment variables for client credentials",
+          "dependencies": [],
+          "details": "1. Create a Spotify Developer account if not already done\n2. Register a new application in the Spotify Developer Dashboard\n3. Set the redirect URI to 'http://localhost:3000/callback'\n4. Note the client ID and client secret\n5. Create a .env file in the project root\n6. Add REACT_APP_SPOTIFY_CLIENT_ID and REACT_APP_SPOTIFY_CLIENT_SECRET to the .env file\n7. Update .gitignore to exclude the .env file",
+          "status": "pending",
+          "testStrategy": "Verify that environment variables are correctly loaded in the application"
+        },
+        {
+          "id": 2,
+          "title": "Create login component with Spotify authorization URL",
+          "description": "Implement a login component with a button that redirects users to the Spotify authorization page",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Create a new LoginButton component\n2. Implement the authorization URL construction as shown in the example\n3. Create a styled button that links to the authorization URL\n4. Add the 'user-read-recently-played' scope to the authorization request\n5. Include the component in the app's login/home page\n6. Add appropriate error handling for cases where client ID is missing",
+          "status": "pending",
+          "testStrategy": "Test that clicking the button redirects to the correct Spotify authorization URL with all required parameters"
+        },
+        {
+          "id": 3,
+          "title": "Implement callback handler for authorization code",
+          "description": "Create a callback component/route that handles the redirect from Spotify with the authorization code",
+          "dependencies": [
+            2
+          ],
+          "details": "1. Create a new CallbackHandler component\n2. Set up a route at '/callback' that renders this component\n3. Extract the authorization code from the URL query parameters\n4. Display a loading state while processing the code\n5. Implement error handling for cases where the user denies permission\n6. After extracting the code, call a function to exchange it for tokens\n7. Redirect to the main application page after successful authentication",
+          "status": "pending",
+          "testStrategy": "Test with mock URL parameters to ensure the code is correctly extracted and error states are handled properly"
+        },
+        {
+          "id": 4,
+          "title": "Implement token exchange and storage",
+          "description": "Create a service to exchange the authorization code for access and refresh tokens, and store them securely",
+          "dependencies": [
+            3
+          ],
+          "details": "1. Create an AuthService with a method to exchange the code for tokens\n2. Implement a POST request to 'https://accounts.spotify.com/api/token' with appropriate headers and body\n3. Include client ID, client secret, grant type, code, and redirect URI in the request\n4. Parse the response to extract access_token, refresh_token, and expires_in\n5. Store the tokens and expiration time in localStorage\n6. Implement encryption/decryption for token storage if possible\n7. Create methods to retrieve stored tokens",
+          "status": "pending",
+          "testStrategy": "Mock the Spotify API response to test token exchange and storage functionality"
+        },
+        {
+          "id": 5,
+          "title": "Implement token refresh mechanism",
+          "description": "Create a mechanism to automatically refresh the access token when it expires",
+          "dependencies": [
+            4
+          ],
+          "details": "1. Create a method in AuthService to check if the current token is expired\n2. Implement a refreshToken method that uses the refresh_token to get a new access_token\n3. Send a POST request to 'https://accounts.spotify.com/api/token' with grant_type=refresh_token\n4. Update the stored tokens with the new access_token and expiration time\n5. Create an axios interceptor or similar mechanism to automatically refresh tokens before making API calls\n6. Handle cases where the refresh token is invalid (redirect to login)\n7. Implement a logout function that clears stored tokens",
+          "status": "pending",
+          "testStrategy": "Test with expired tokens to ensure the refresh mechanism works correctly, and test the logout functionality"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Create Spotify API Service",
+      "description": "Develop a service layer to handle all interactions with the Spotify Web API, including fetching user's recently played tracks and album information.",
+      "details": "Create a Spotify service module with the following functions:\n\n1. `getRecentlyPlayedTracks(limit = 50)` - Fetch user's recently played tracks\n2. `getAlbumDetails(albumId)` - Fetch detailed information about an album\n3. `getTrackDetails(trackId)` - Fetch detailed information about a track\n\nImplement proper error handling and rate limiting awareness:\n```javascript\nconst getRecentlyPlayedTracks = async (limit = 50) => {\n  try {\n    const response = await axios.get(\n      `https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`,\n      {\n        headers: {\n          Authorization: `Bearer ${getAccessToken()}`\n        }\n      }\n    );\n    return response.data.items;\n  } catch (error) {\n    handleApiError(error);\n    throw error;\n  }\n};\n```\n\nImplement caching strategy to minimize redundant API calls and handle offline scenarios.",
+      "testStrategy": "Create unit tests for each API function using Jest and mock responses. Test error handling with simulated API failures. Verify caching mechanism works correctly by checking that repeated calls with the same parameters don't trigger new API requests.",
+      "priority": "high",
+      "dependencies": [
+        2
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set up Spotify API authentication module",
+          "description": "Create a module to handle Spotify API authentication, including token retrieval, storage, and refresh mechanisms.",
+          "dependencies": [],
+          "details": "Implement functions for getAccessToken(), refreshToken(), and handleTokenExpiration(). Store tokens securely in localStorage with encryption. Include a mechanism to check token validity before making API calls and automatically refresh when needed. Export a getAuthHeader() utility function that other modules can use.",
+          "status": "pending",
+          "testStrategy": "Test token retrieval, storage, and refresh logic with mock responses. Verify token expiration detection works correctly."
+        },
+        {
+          "id": 2,
+          "title": "Implement API error handling and rate limiting",
+          "description": "Create a robust error handling system for Spotify API responses, including rate limit detection and retry logic.",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement handleApiError() function that categorizes errors (network, authentication, rate limiting, etc.). For rate limiting (429 errors), add exponential backoff retry logic. Create a request queue system to prevent exceeding Spotify's rate limits. Add logging for API errors to help with debugging.",
+          "status": "pending",
+          "testStrategy": "Test with simulated API errors including 401, 429, and network failures. Verify retry mechanism works correctly with different error types."
+        },
+        {
+          "id": 3,
+          "title": "Develop caching layer for API responses",
+          "description": "Implement a caching strategy to store API responses locally and reduce redundant API calls.",
+          "dependencies": [
+            2
+          ],
+          "details": "Create a cache module with get/set methods that stores responses in localStorage with TTL (time-to-live) values appropriate for each endpoint. Implement cache invalidation logic. Add offline detection to serve cached data when network is unavailable. Use a cache key strategy that includes query parameters.",
+          "status": "pending",
+          "testStrategy": "Test cache hit/miss scenarios, expiration logic, and offline fallback behavior. Verify cache size management works correctly."
+        },
+        {
+          "id": 4,
+          "title": "Implement core Spotify API service functions",
+          "description": "Create the main service functions for fetching recently played tracks, album details, and track details.",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Implement getRecentlyPlayedTracks(limit), getAlbumDetails(albumId), and getTrackDetails(trackId) functions using axios. Each function should use the authentication module, apply caching, and handle errors appropriately. Format the response data to match the application's needs and filter out unnecessary fields to keep the cache size manageable.",
+          "status": "pending",
+          "testStrategy": "Test each function with real API calls and mock responses. Verify correct parameter handling and response formatting."
+        },
+        {
+          "id": 5,
+          "title": "Add data transformation and normalization utilities",
+          "description": "Create utility functions to transform and normalize Spotify API responses for consistent use throughout the application.",
+          "dependencies": [
+            4
+          ],
+          "details": "Implement functions to normalize track objects, album objects, and artist objects into consistent formats. Add utilities for extracting key information like album artwork in different sizes, track duration in readable format, etc. Create helper methods for common operations like finding the highest quality image from Spotify's images array.",
+          "status": "pending",
+          "testStrategy": "Test transformation functions with various API response formats, including edge cases like missing fields or unusual data structures."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Implement Album Hand Generation Logic",
+      "description": "Create the logic to generate the player's hand of 12 albums based on their recently played tracks from Spotify.",
+      "details": "Implement the album hand generation algorithm:\n\n1. Fetch the user's 50 most recently played tracks using the Spotify service\n2. Extract unique albums from these tracks\n3. Select the 12 most recently played unique albums/EPs\n4. If fewer than 12 albums are available, implement fallback logic to select popular UMG albums\n\n```javascript\nconst generateAlbumHand = async () => {\n  const recentTracks = await spotifyService.getRecentlyPlayedTracks(50);\n  \n  // Extract unique albums\n  const uniqueAlbums = [];\n  const albumIds = new Set();\n  \n  recentTracks.forEach(item => {\n    const albumId = item.track.album.id;\n    if (!albumIds.has(albumId)) {\n      albumIds.add(albumId);\n      uniqueAlbums.push(item.track.album);\n    }\n  });\n  \n  // Take the first 12 or all if fewer\n  const playerHand = uniqueAlbums.slice(0, 12);\n  \n  // If we have fewer than 12, add fallback albums\n  if (playerHand.length < 12) {\n    const fallbackAlbums = await getFallbackAlbums(12 - playerHand.length);\n    playerHand.push(...fallbackAlbums);\n  }\n  \n  return playerHand;\n};\n```\n\nEnsure the function handles edge cases such as users with limited listening history.",
+      "testStrategy": "Test with various mock Spotify listening histories, including edge cases: users with fewer than 12 albums played, users with exactly 12 albums, and users with many albums. Verify fallback logic works correctly when needed. Test that duplicate albums are correctly filtered out.",
+      "priority": "high",
+      "dependencies": [
+        3
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Spotify Recently Played Tracks Fetching",
+          "description": "Create a function to fetch the user's 50 most recently played tracks from the Spotify API using the existing spotifyService.",
+          "dependencies": [],
+          "details": "Implement the spotifyService.getRecentlyPlayedTracks(limit) function that makes an API call to Spotify's recently played endpoint. Ensure proper error handling for API failures, rate limiting, and authentication issues. Return the raw track data from Spotify in a consistent format.",
+          "status": "pending",
+          "testStrategy": "Create unit tests with mocked Spotify API responses for successful calls, empty results, and error scenarios."
+        },
+        {
+          "id": 2,
+          "title": "Implement Unique Album Extraction Logic",
+          "description": "Create a function that extracts unique albums from the list of recently played tracks, preserving the order of first appearance.",
+          "dependencies": [],
+          "details": "Implement the logic to iterate through the recently played tracks, identify unique albums by their IDs, and create an array of album objects. Use a Set to track which album IDs have already been processed. Ensure the function handles edge cases like tracks with missing album information.",
+          "status": "pending",
+          "testStrategy": "Test with arrays containing duplicate albums, empty arrays, and malformed track objects."
+        },
+        {
+          "id": 3,
+          "title": "Implement Fallback Album Selection",
+          "description": "Create a function to fetch popular UMG albums when a user has fewer than 12 unique albums in their recently played history.",
+          "dependencies": [],
+          "details": "Implement the getFallbackAlbums(count) function that retrieves a specified number of popular or recommended albums. This could use a predefined list, query Spotify's featured or popular albums, or use another data source. Ensure the returned albums have the same data structure as those from the user's history.",
+          "status": "pending",
+          "testStrategy": "Test the function with different count values and verify it returns the correct number of albums with complete information."
+        },
+        {
+          "id": 4,
+          "title": "Integrate Album Hand Generation Function",
+          "description": "Combine the unique album extraction and fallback logic into the main generateAlbumHand function to create a complete hand of 12 albums.",
+          "dependencies": [],
+          "details": "Implement the complete generateAlbumHand function that calls the recently played tracks function, extracts unique albums, slices to get the first 12 (or fewer), and then supplements with fallback albums if needed. Ensure the final array contains exactly 12 album objects with consistent structure.",
+          "status": "pending",
+          "testStrategy": "Test with mock data simulating users with various listening histories (0, <12, and >12 unique albums)."
+        },
+        {
+          "id": 5,
+          "title": "Add Edge Case Handling and Performance Optimization",
+          "description": "Enhance the album hand generation with comprehensive error handling, edge cases, and performance optimizations.",
+          "dependencies": [],
+          "details": "Add handling for scenarios such as API failures, network issues, and users with no listening history. Implement caching for fallback albums to improve performance. Add logging for debugging purposes. Consider adding a timeout mechanism to prevent long-running operations. Ensure all album objects have consistent properties needed by the UI layer.",
+          "status": "pending",
+          "testStrategy": "Create integration tests that simulate various error conditions and edge cases. Measure and verify performance with large datasets."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Create Computer Player Album Collection",
+      "description": "Develop a static collection of 12 pre-selected UMG albums for the computer opponent to use during gameplay.",
+      "details": "Create a curated collection of 12 diverse UMG albums for the computer player:\n\n1. Select albums from different genres, eras, and popularity levels\n2. Include a mix of well-known and obscure albums to create varied gameplay\n3. Store album data in a JSON file or database\n4. For each album, include:\n   - Album ID (Spotify ID)\n   - Album name\n   - Artist name\n   - Release date\n   - Cover art URL\n   - Tracks array with track details\n\nExample structure:\n```javascript\nconst computerAlbums = [\n  {\n    id: '1yGbNOtRIgdIiGHOEBaZWf',\n    name: 'Thriller',\n    artist: 'Michael Jackson',\n    releaseDate: '1982-11-30',\n    coverArt: 'https://i.scdn.co/image/ab67616d0000b273112d15add9c5d64578c0f194',\n    tracks: [\n      {\n        id: '5ChkMS8OtdzJeqyybCc9R5',\n        name: 'Billie Jean',\n        duration: 294053,\n        popularity: 88,\n        releaseDate: '1982-11-30',\n        chartPosition: 1\n      },\n      // Additional tracks...\n    ]\n  },\n  // Additional albums...\n];\n```\n\nEnsure each album has complete data for all challenge categories (chart position, play count, release date).",
+      "testStrategy": "Verify all 12 albums have complete data for all required fields. Test that the data can be correctly loaded and accessed by the game. Validate that the collection provides a balanced gameplay experience with varied outcomes across different challenge categories.",
+      "priority": "medium",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Research and Select 12 Diverse UMG Albums",
+          "description": "Research and compile a list of 12 diverse UMG albums spanning different genres, eras, and popularity levels for the computer player collection.",
+          "dependencies": [],
+          "details": "1. Research UMG's catalog to identify albums from different decades (1960s-2020s)\n2. Include albums from various genres (pop, rock, hip-hop, R&B, country, etc.)\n3. Ensure diversity in popularity (include both chart-toppers and cult classics)\n4. Verify all albums have sufficient data available for game challenges\n5. Document selection rationale for each album\n6. Create a spreadsheet with basic album information (name, artist, genre, release year, popularity)",
+          "status": "pending",
+          "testStrategy": "Review the selection with team members to ensure diversity and appropriate representation across genres and time periods."
+        },
+        {
+          "id": 2,
+          "title": "Gather Detailed Album Metadata",
+          "description": "Collect comprehensive metadata for each selected album including Spotify IDs, release dates, cover art URLs, and chart positions.",
+          "dependencies": [],
+          "details": "1. Use Spotify API to retrieve album IDs, names, artists, release dates, and cover art URLs\n2. Research historical chart positions for albums and their tracks\n3. Gather popularity metrics and play counts where available\n4. Document release dates in ISO format (YYYY-MM-DD)\n5. Download and store local copies of album cover art as backup\n6. Organize all metadata in a structured format for easy import",
+          "status": "pending",
+          "testStrategy": "Verify all required fields are present and correctly formatted for each album. Ensure no missing data points that would affect gameplay."
+        },
+        {
+          "id": 3,
+          "title": "Collect and Structure Track Information",
+          "description": "For each album, compile detailed information about all tracks including IDs, durations, popularity metrics, and chart positions.",
+          "dependencies": [],
+          "details": "1. Use Spotify API to retrieve track listings for each album\n2. For each track, collect: ID, name, duration (in milliseconds), popularity score\n3. Research historical chart positions for individual tracks\n4. Gather play count data where available\n5. Ensure consistent data structure across all tracks\n6. Verify all tracks have complete information for game challenges",
+          "status": "pending",
+          "testStrategy": "Test data completeness by checking that each track has all required fields populated. Validate track counts match expected album track listings."
+        },
+        {
+          "id": 4,
+          "title": "Create JSON Data Structure",
+          "description": "Develop a well-structured JSON file containing the complete computer player album collection with all required metadata.",
+          "dependencies": [],
+          "details": "1. Create a JSON structure following the example format in the task description\n2. Organize albums in an array with complete metadata for each\n3. Include nested track arrays with comprehensive track details\n4. Ensure consistent formatting and data types throughout\n5. Add comments for any special cases or notable album features\n6. Validate JSON structure for proper formatting",
+          "status": "pending",
+          "testStrategy": "Parse the JSON file programmatically to verify it's valid and contains all required data. Check for any missing fields or formatting issues."
+        },
+        {
+          "id": 5,
+          "title": "Integrate Album Collection with Game System",
+          "description": "Implement the computer player album collection in the game system and create functions to access and utilize the data during gameplay.",
+          "dependencies": [],
+          "details": "1. Import the JSON data into the game's asset system\n2. Create a ComputerPlayerCollection class/module to manage the album data\n3. Implement methods to retrieve random albums or albums matching specific criteria\n4. Add functions to access album and track details during challenges\n5. Ensure proper error handling for any missing data\n6. Add documentation for how the computer collection is used in gameplay",
+          "status": "pending",
+          "testStrategy": "Create unit tests to verify all albums can be accessed correctly. Test edge cases like retrieving albums by specific criteria. Verify integration with the challenge system."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Implement Game State Management",
+      "description": "Create a context and reducer to manage the game state, including player hands, scores, turn tracking, and game history.",
+      "details": "Implement a React Context and useReducer pattern for game state management:\n\n1. Create GameContext and GameProvider:\n```javascript\nconst GameContext = createContext();\n\nconst initialState = {\n  playerAlbums: [],\n  computerAlbums: [],\n  playerScore: 0,\n  computerScore: 0,\n  currentTurn: 'player', // 'player' or 'computer'\n  selectedAlbum: null,\n  selectedTrack: null,\n  selectedCategory: null,\n  gameHistory: [],\n  gameStatus: 'idle', // 'idle', 'playing', 'completed'\n  winner: null\n};\n\nconst gameReducer = (state, action) => {\n  switch (action.type) {\n    case 'INITIALIZE_GAME':\n      return {\n        ...initialState,\n        playerAlbums: action.payload.playerAlbums,\n        computerAlbums: action.payload.computerAlbums,\n        gameStatus: 'playing'\n      };\n    case 'SELECT_ALBUM':\n      return { ...state, selectedAlbum: action.payload };\n    case 'SELECT_TRACK':\n      return { ...state, selectedTrack: action.payload };\n    case 'SELECT_CATEGORY':\n      return { ...state, selectedCategory: action.payload };\n    case 'COMPLETE_TURN':\n      return {\n        ...state,\n        playerScore: action.payload.playerScore,\n        computerScore: action.payload.computerScore,\n        currentTurn: state.currentTurn === 'player' ? 'computer' : 'player',\n        gameHistory: [...state.gameHistory, action.payload.turnResult],\n        selectedAlbum: null,\n        selectedTrack: null,\n        selectedCategory: null\n      };\n    case 'END_GAME':\n      return {\n        ...state,\n        gameStatus: 'completed',\n        winner: action.payload.winner\n      };\n    default:\n      return state;\n  }\n};\n```\n\n2. Create custom hooks for game actions:\n- useGameInitialization\n- usePlayerTurn\n- useComputerTurn\n- useGameCompletion\n\n3. Implement persistence of game state using localStorage to allow resuming games.",
+      "testStrategy": "Write unit tests for the reducer to verify each action correctly updates the state. Test that the game state persists correctly between page refreshes. Create integration tests to verify the full game flow from initialization to completion works correctly with the state management.",
+      "priority": "high",
+      "dependencies": [
+        4,
+        5
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create GameContext and GameProvider",
+          "description": "Implement the React Context and Provider components with initial state and reducer function for game state management.",
+          "dependencies": [],
+          "details": "Create a new file `GameContext.js` that exports:\n1. A GameContext using React's createContext\n2. The initialState object with all game state properties\n3. The gameReducer function with cases for INITIALIZE_GAME, SELECT_ALBUM, SELECT_TRACK, SELECT_CATEGORY, COMPLETE_TURN, and END_GAME\n4. A GameProvider component that wraps children with the context provider and uses useReducer with the gameReducer and initialState",
+          "status": "pending",
+          "testStrategy": "Test that the GameProvider renders without errors and properly wraps child components. Verify the reducer handles each action type correctly by dispatching actions and checking the resulting state."
+        },
+        {
+          "id": 2,
+          "title": "Implement useGameState custom hook",
+          "description": "Create a custom hook that provides access to the game state and dispatch function throughout the application.",
+          "dependencies": [
+            1
+          ],
+          "details": "Create a new file `useGameState.js` that:\n1. Imports the GameContext\n2. Exports a useGameState hook that uses useContext to access the game state and dispatch function\n3. Includes error handling for when the hook is used outside of a GameProvider\n4. Returns an object with the current state and dispatch function",
+          "status": "pending",
+          "testStrategy": "Test the hook in a component wrapped with GameProvider to ensure it correctly provides access to state and dispatch. Test error handling when used outside a provider."
+        },
+        {
+          "id": 3,
+          "title": "Implement game action hooks",
+          "description": "Create custom hooks for game actions including initialization, player turns, computer turns, and game completion.",
+          "dependencies": [
+            2
+          ],
+          "details": "Create a new file `gameActionHooks.js` that exports:\n1. useGameInitialization - handles setting up a new game with initial albums\n2. usePlayerTurn - manages player selection and turn completion\n3. useComputerTurn - implements AI logic for computer's turn\n4. useGameCompletion - handles game ending conditions and determining the winner\n\nEach hook should use the useGameState hook and return the necessary functions to perform its actions.",
+          "status": "pending",
+          "testStrategy": "Test each hook individually with mock state and dispatch functions. Verify that each action correctly dispatches the appropriate actions with the expected payloads."
+        },
+        {
+          "id": 4,
+          "title": "Implement game state persistence",
+          "description": "Add functionality to save and load game state using localStorage to allow resuming games.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Enhance the GameProvider to:\n1. Load saved game state from localStorage on initial render\n2. Save game state to localStorage whenever it changes using useEffect\n3. Add new reducer actions for SAVE_GAME and LOAD_GAME\n4. Create utility functions saveGameState and loadGameState\n5. Implement a mechanism to detect and handle corrupted or invalid saved states",
+          "status": "pending",
+          "testStrategy": "Test saving and loading functionality by creating a game state, saving it, clearing the state, and loading it back. Verify that all state properties are correctly preserved."
+        },
+        {
+          "id": 5,
+          "title": "Connect game state to UI components",
+          "description": "Integrate the game state management with UI components to create a functional game flow.",
+          "dependencies": [
+            2,
+            3,
+            4
+          ],
+          "details": "1. Update App.js to wrap the application with GameProvider\n2. Modify existing game components to use the useGameState hook instead of local state\n3. Connect player interaction events to the appropriate game action hooks\n4. Implement UI feedback based on game state (current turn, scores, game status)\n5. Add a game control panel with buttons for starting a new game, saving, and loading\n6. Create a GameHistory component to display the history of moves using the gameHistory state",
+          "status": "pending",
+          "testStrategy": "Perform integration testing to ensure components correctly respond to state changes. Test the complete game flow from initialization through multiple turns to game completion."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Design Skeuomorphic UI Components",
+      "description": "Create reusable UI components with a skeuomorphic design that resembles physical objects like album covers, turntables, and wooden surfaces.",
+      "details": "Develop a set of styled components with skeuomorphic design:\n\n1. Album Shelf Component:\n```javascript\nconst AlbumShelf = styled.div`\n  background-image: url(${woodTexture});\n  border-radius: 8px;\n  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);\n  display: flex;\n  flex-wrap: wrap;\n  gap: 16px;\n  padding: 20px;\n  position: relative;\n  \n  &::before {\n    content: '';\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    height: 10px;\n    background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);\n    border-radius: 8px 8px 0 0;\n  }\n`;\n```\n\n2. Album Cover Component with 3D effect:\n```javascript\nconst AlbumCover = styled.div`\n  width: 150px;\n  height: 150px;\n  background-image: url(${props => props.coverUrl});\n  background-size: cover;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);\n  border-radius: 2px;\n  transition: transform 0.3s ease, box-shadow 0.3s ease;\n  position: relative;\n  \n  &::after {\n    content: '';\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);\n    border-radius: 2px;\n  }\n  \n  &:hover {\n    transform: translateY(-10px) rotateY(-5deg);\n    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.2);\n  }\n`;\n```\n\n3. Turntable Component with spinning animation:\n```javascript\nconst Turntable = styled.div`\n  width: 300px;\n  height: 300px;\n  border-radius: 50%;\n  background-color: #333;\n  position: relative;\n  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);\n  \n  &::before {\n    content: '';\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    width: 100px;\n    height: 100px;\n    background-color: #888;\n    border-radius: 50%;\n    transform: translate(-50%, -50%);\n    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);\n  }\n`;\n\nconst Vinyl = styled.div`\n  width: 280px;\n  height: 280px;\n  border-radius: 50%;\n  background: radial-gradient(circle, #000 0%, #333 100%);\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  animation: ${props => props.isPlaying ? 'spin 5s linear infinite' : 'none'};\n  \n  &::before {\n    content: '';\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    width: 80px;\n    height: 80px;\n    background-image: url(${props => props.albumCover});\n    background-size: cover;\n    border-radius: 50%;\n    transform: translate(-50%, -50%);\n  }\n  \n  @keyframes spin {\n    from { transform: translate(-50%, -50%) rotate(0deg); }\n    to { transform: translate(-50%, -50%) rotate(360deg); }\n  }\n`;\n```\n\nCreate additional components for:\n- Wooden game table surface\n- Challenge category cards\n- Score display with vintage counter style\n- Game history log with paper texture",
+      "testStrategy": "Create a Storybook instance to visually test each component in isolation. Test components across different screen sizes to ensure responsive behavior. Verify animations and transitions work smoothly across different browsers. Conduct user testing to ensure the skeuomorphic design is intuitive and visually appealing.",
+      "priority": "medium",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Wooden Surface Components",
+          "description": "Develop reusable wooden surface components that will serve as backgrounds for various UI elements, including the album shelf and game table.",
+          "dependencies": [],
+          "details": "Implement styled components with realistic wood textures using background images and CSS effects. Create at least two variations: a light wood texture for the album shelf and a darker wood texture for the game table. Use box-shadow, linear-gradient, and border-radius to create depth and realistic lighting effects. Export these as reusable components that accept customization props like woodType, shadowIntensity, and borderStyle.",
+          "status": "pending",
+          "testStrategy": "Render components with various prop combinations and verify visual appearance across different screen sizes. Test with both light and dark mode themes."
+        },
+        {
+          "id": 2,
+          "title": "Implement Album and Music Components",
+          "description": "Create the album shelf, album cover, and vinyl components with realistic 3D effects and animations.",
+          "dependencies": [
+            1
+          ],
+          "details": "Refine the existing AlbumShelf component to use the wooden surface component. Enhance the AlbumCover component with more realistic edge and spine details. Implement the Turntable and Vinyl components with proper spinning animations and realistic reflections. Add subtle hover and active state animations that mimic physical interactions. Ensure all components are responsive and maintain their skeuomorphic appearance at different sizes.",
+          "status": "pending",
+          "testStrategy": "Test animations and transitions for smoothness. Verify that hover effects work on both desktop and mobile. Ensure album covers display correctly with various image aspect ratios."
+        },
+        {
+          "id": 3,
+          "title": "Design Game Card Components",
+          "description": "Create skeuomorphic challenge category cards with realistic paper textures and physical card characteristics.",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement styled card components that resemble physical playing cards with slightly rounded corners, subtle edge highlights, and paper textures. Add realistic shadows that change on hover to simulate picking up the card. Include a flip animation that reveals card details on the back. Create variations for different game categories with distinct visual styles while maintaining a cohesive design language. Make cards stackable in a way that shows depth.",
+          "status": "pending",
+          "testStrategy": "Test card flip animations for smoothness. Verify that stacked cards display correctly with proper z-index and shadow effects. Test touch interactions on mobile devices."
+        },
+        {
+          "id": 4,
+          "title": "Develop Vintage Score Display Components",
+          "description": "Create skeuomorphic score display components that resemble vintage mechanical counters and gauges.",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement a VintageCounter component that mimics mechanical number counters with rolling digit animations. Create a ScoreGauge component that resembles an analog meter with a moving needle. Use CSS transforms and transitions to create realistic mechanical movements. Add subtle reflections on glass-like surfaces and metallic textures for frames. Include sound effect hooks that can be optionally enabled to enhance the mechanical feel.",
+          "status": "pending",
+          "testStrategy": "Test counter animations for smoothness during rapid score changes. Verify that gauge components accurately represent different value ranges. Test accessibility features to ensure score information is available to screen readers."
+        },
+        {
+          "id": 5,
+          "title": "Create Game History Log Component",
+          "description": "Implement a skeuomorphic game history log that resembles a vintage paper notebook or ledger.",
+          "dependencies": [
+            1,
+            4
+          ],
+          "details": "Create a GameHistoryLog component with a realistic paper texture background and subtle aging effects on edges. Implement lined paper styling with proper text alignment. Add a scrolling mechanism that mimics turning pages rather than standard scrolling. Include subtle ink effects for text entries that make them appear handwritten or stamped. Integrate with the score display components to show historical score entries. Add the ability to \"tear out\" or archive old entries with appropriate animations.",
+          "status": "pending",
+          "testStrategy": "Test scrolling behavior for smoothness. Verify that long history logs perform well without lag. Test the component with various entry types and lengths to ensure consistent styling."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Implement Album Selection Interface",
+      "description": "Create an intuitive interface for browsing and selecting albums from the player's collection.",
+      "details": "Implement the album selection interface with the following features:\n\n1. Scrollable album shelf displaying all 12 albums in the player's hand\n2. Hover effects to highlight available albums\n3. Click interaction to select an album\n4. Visual indication of selected album\n5. Responsive design that works on various screen sizes\n\n```jsx\nconst AlbumSelectionInterface = () => {\n  const { state, dispatch } = useGameContext();\n  const { playerAlbums, selectedAlbum, currentTurn } = state;\n  \n  const handleAlbumSelect = (album) => {\n    if (currentTurn !== 'player') return;\n    dispatch({ type: 'SELECT_ALBUM', payload: album });\n  };\n  \n  return (\n    <div className=\"album-selection-container\">\n      <h2>Your Album Collection</h2>\n      <AlbumShelf>\n        {playerAlbums.map((album) => (\n          <AlbumCover\n            key={album.id}\n            coverUrl={album.coverArt}\n            onClick={() => handleAlbumSelect(album)}\n            className={selectedAlbum?.id === album.id ? 'selected' : ''}\n          >\n            <AlbumInfo>\n              <AlbumTitle>{album.name}</AlbumTitle>\n              <AlbumArtist>{album.artist}</AlbumArtist>\n            </AlbumInfo>\n          </AlbumCover>\n        ))}\n      </AlbumShelf>\n    </div>\n  );\n};\n```\n\nImplement smooth animations for album selection and deselection. Add tooltips showing album title and artist on hover.",
+      "testStrategy": "Test the interface with different album collections to ensure proper display. Verify that album selection works correctly and updates the game state. Test keyboard navigation for accessibility. Conduct usability testing to ensure the interface is intuitive and responsive across different devices.",
+      "priority": "medium",
+      "dependencies": [
+        6,
+        7
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create AlbumShelf and AlbumCover Components",
+          "description": "Implement the core components for displaying albums in a scrollable shelf with proper styling and layout.",
+          "dependencies": [],
+          "details": "Create styled components for AlbumShelf (container) and AlbumCover (individual album). Style AlbumShelf as a horizontal scrollable container with flex layout. Style AlbumCover to display album artwork with appropriate dimensions, border-radius, and box-shadow. Implement responsive design using media queries to adjust album size and shelf layout for different screen sizes.",
+          "status": "pending",
+          "testStrategy": "Test rendering with different screen sizes using React Testing Library. Verify scrolling behavior works on mobile and desktop viewports."
+        },
+        {
+          "id": 2,
+          "title": "Implement Album Hover Effects and Tooltips",
+          "description": "Add hover effects to highlight available albums and implement tooltips showing album title and artist on hover.",
+          "dependencies": [],
+          "details": "Enhance the AlbumCover component with hover effects using CSS transitions for scale and shadow changes. Create a Tooltip component that displays album information on hover. Position the tooltip appropriately relative to the album cover. Include album title and artist in the tooltip with styled typography. Ensure tooltips don't overflow viewport boundaries.",
+          "status": "pending",
+          "testStrategy": "Test hover interactions and tooltip appearance/disappearance with user events in React Testing Library."
+        },
+        {
+          "id": 3,
+          "title": "Implement Album Selection Logic",
+          "description": "Add click interaction to select albums and update the game state accordingly.",
+          "dependencies": [],
+          "details": "Implement the handleAlbumSelect function to dispatch the SELECT_ALBUM action with the selected album as payload. Add conditional logic to prevent album selection when it's not the player's turn. Create a visual indication for the selected album by applying a 'selected' class with distinctive styling (e.g., highlighted border, elevation change). Ensure only one album can be selected at a time.",
+          "status": "pending",
+          "testStrategy": "Test selection logic with different game states. Verify correct action is dispatched and UI updates accordingly."
+        },
+        {
+          "id": 4,
+          "title": "Add Animation for Album Selection and Deselection",
+          "description": "Implement smooth animations when albums are selected or deselected to enhance user experience.",
+          "dependencies": [],
+          "details": "Use CSS transitions or React animation libraries (like framer-motion) to animate album selection/deselection. Animate properties like scale, position, and shadow to create a satisfying interaction. Implement different animations for selection vs. deselection. Ensure animations are performant and don't cause layout shifts. Add appropriate timing and easing functions for natural-feeling animations.",
+          "status": "pending",
+          "testStrategy": "Manually test animation smoothness across devices. Use React Testing Library to verify class changes that trigger animations."
+        },
+        {
+          "id": 5,
+          "title": "Integrate AlbumInfo Component with Album Details",
+          "description": "Create and integrate the AlbumInfo component to display album metadata (title and artist) within the album covers.",
+          "dependencies": [],
+          "details": "Implement the AlbumInfo, AlbumTitle, and AlbumArtist components with appropriate styling. Position the AlbumInfo component within AlbumCover to show metadata on hover or permanently based on design requirements. Style text for readability against various album cover backgrounds (consider text shadow or semi-transparent background). Implement text truncation for long titles/artist names with ellipsis.",
+          "status": "pending",
+          "testStrategy": "Test rendering of album information with various text lengths. Verify text remains readable on different background colors."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Implement Track Selection Interface",
+      "description": "Create an interface for selecting tracks from the chosen album, displaying track information in a visually appealing way.",
+      "details": "Implement the track selection interface with the following features:\n\n1. Display all tracks from the selected album in a scrollable list\n2. Show track title, duration, and track number\n3. Implement hover and selection effects\n4. Ensure the interface appears only after an album is selected\n\n```jsx\nconst TrackSelectionInterface = () => {\n  const { state, dispatch } = useGameContext();\n  const { selectedAlbum, selectedTrack, currentTurn } = state;\n  \n  const handleTrackSelect = (track) => {\n    if (currentTurn !== 'player') return;\n    dispatch({ type: 'SELECT_TRACK', payload: track });\n  };\n  \n  if (!selectedAlbum) return null;\n  \n  return (\n    <div className=\"track-selection-container\">\n      <h3>Select a Track</h3>\n      <TrackList>\n        {selectedAlbum.tracks.map((track) => (\n          <TrackItem\n            key={track.id}\n            onClick={() => handleTrackSelect(track)}\n            className={selectedTrack?.id === track.id ? 'selected' : ''}\n          >\n            <TrackNumber>{track.track_number}</TrackNumber>\n            <TrackTitle>{track.name}</TrackTitle>\n            <TrackDuration>{formatDuration(track.duration_ms)}</TrackDuration>\n          </TrackItem>\n        ))}\n      </TrackList>\n    </div>\n  );\n};\n\nconst TrackList = styled.div`\n  background: rgba(0, 0, 0, 0.05);\n  border-radius: 8px;\n  padding: 10px;\n  max-height: 300px;\n  overflow-y: auto;\n  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);\n`;\n\nconst TrackItem = styled.div`\n  display: flex;\n  align-items: center;\n  padding: 8px 12px;\n  border-radius: 4px;\n  cursor: pointer;\n  transition: background-color 0.2s ease;\n  \n  &:hover {\n    background-color: rgba(0, 0, 0, 0.1);\n  }\n  \n  &.selected {\n    background-color: rgba(0, 0, 0, 0.2);\n    font-weight: bold;\n  }\n`;\n```\n\nImplement a function to format track duration from milliseconds to MM:SS format.",
+      "testStrategy": "Test the interface with albums containing different numbers of tracks. Verify track selection correctly updates the game state. Test edge cases like albums with very long track titles or many tracks. Ensure the interface is accessible via keyboard navigation.",
+      "priority": "medium",
+      "dependencies": [
+        8
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create formatDuration utility function",
+          "description": "Implement a utility function that converts track duration from milliseconds to MM:SS format",
+          "dependencies": [],
+          "details": "Create a utility function called formatDuration that takes a duration in milliseconds as input and returns a string in MM:SS format. The function should handle edge cases such as single-digit seconds (pad with leading zero) and handle hours if needed. This function will be used to display track durations in a readable format.",
+          "status": "pending",
+          "testStrategy": "Test with various inputs including zero, small values, and large values that include hours to ensure proper formatting."
+        },
+        {
+          "id": 2,
+          "title": "Implement styled components for track list",
+          "description": "Create and style the components needed for the track selection interface",
+          "dependencies": [],
+          "details": "Implement the styled components for the track selection interface including TrackList, TrackItem, TrackNumber, TrackTitle, and TrackDuration. Ensure they follow the design specifications with proper spacing, colors, and hover effects. The TrackList should have a scrollable container with a max height, and TrackItems should have hover and selection states.",
+          "status": "pending",
+          "testStrategy": "Verify the components render correctly with different screen sizes and that the scrolling behavior works as expected."
+        },
+        {
+          "id": 3,
+          "title": "Create track selection logic",
+          "description": "Implement the logic for selecting tracks and updating the game state",
+          "dependencies": [],
+          "details": "Implement the handleTrackSelect function that dispatches the SELECT_TRACK action to the game context when a track is clicked. Ensure that tracks can only be selected during the player's turn by checking the currentTurn state. The function should update the selectedTrack in the game state.",
+          "status": "pending",
+          "testStrategy": "Test that tracks can only be selected during the player's turn and that the correct track is added to the game state when selected."
+        },
+        {
+          "id": 4,
+          "title": "Build TrackSelectionInterface component",
+          "description": "Assemble the main component that displays the track selection interface",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Create the TrackSelectionInterface component that conditionally renders based on whether an album is selected. The component should display a header and the list of tracks from the selected album. Each track should display its number, title, and formatted duration. Implement the logic to highlight the currently selected track.",
+          "status": "pending",
+          "testStrategy": "Test the component renders correctly when an album is selected and doesn't render when no album is selected. Verify that track information displays correctly and that selection highlighting works."
+        },
+        {
+          "id": 5,
+          "title": "Add accessibility and UX enhancements",
+          "description": "Improve the track selection interface with accessibility features and UX improvements",
+          "dependencies": [
+            4
+          ],
+          "details": "Enhance the track selection interface with keyboard navigation support, proper ARIA attributes, and focus management. Add visual indicators for the current track being played (if applicable). Implement smooth animations for hover and selection states. Add tooltips for tracks with long titles that might be truncated. Ensure the interface is responsive and works well on different screen sizes.",
+          "status": "pending",
+          "testStrategy": "Test keyboard navigation, screen reader compatibility, and responsive behavior on different devices. Verify that all interactive elements are accessible and that the interface provides clear feedback to users."
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Implement Challenge Category Selection",
+      "description": "Create an interface for selecting one of the five challenge categories to compare tracks.",
+      "details": "Implement the challenge category selection interface with the following features:\n\n1. Display all five challenge categories as selectable cards:\n   - Top Chart Rank\n   - Most Plays\n   - Least Plays\n   - Oldest Track\n   - Newest Track\n2. Include visual icons representing each category\n3. Show brief explanation of each category on hover\n4. Implement selection effect\n5. Only enable after track selection\n\n```jsx\nconst categories = [\n  {\n    id: 'chart_rank',\n    name: 'Top Chart Rank',\n    description: 'Highest chart position wins (lower number = better rank)',\n    icon: '🏆'\n  },\n  {\n    id: 'most_plays',\n    name: 'Most Plays',\n    description: 'Track with more Spotify plays wins',\n    icon: '🔥'\n  },\n  {\n    id: 'least_plays',\n    name: 'Least Plays',\n    description: 'Track with fewer Spotify plays wins',\n    icon: '💎'\n  },\n  {\n    id: 'oldest',\n    name: 'Oldest Track',\n    description: 'Earlier release date wins',\n    icon: '🕰️'\n  },\n  {\n    id: 'newest',\n    name: 'Newest Track',\n    description: 'Later release date wins',\n    icon: '🆕'\n  }\n];\n\nconst CategorySelectionInterface = () => {\n  const { state, dispatch } = useGameContext();\n  const { selectedTrack, selectedCategory, currentTurn } = state;\n  \n  const handleCategorySelect = (category) => {\n    if (currentTurn !== 'player' || !selectedTrack) return;\n    dispatch({ type: 'SELECT_CATEGORY', payload: category });\n  };\n  \n  if (!selectedTrack) return null;\n  \n  return (\n    <div className=\"category-selection-container\">\n      <h3>Select a Challenge Category</h3>\n      <CategoryGrid>\n        {categories.map((category) => (\n          <CategoryCard\n            key={category.id}\n            onClick={() => handleCategorySelect(category)}\n            className={selectedCategory?.id === category.id ? 'selected' : ''}\n          >\n            <CategoryIcon>{category.icon}</CategoryIcon>\n            <CategoryName>{category.name}</CategoryName>\n            <CategoryTooltip>{category.description}</CategoryTooltip>\n          </CategoryCard>\n        ))}\n      </CategoryGrid>\n    </div>\n  );\n};\n```\n\nStyle the category cards with skeuomorphic design elements like embossed icons and card-like appearance.",
+      "testStrategy": "Test that categories only become selectable after a track is chosen. Verify that selecting a category correctly updates the game state. Test tooltip visibility and content. Ensure the interface is accessible via keyboard navigation and screen readers.",
+      "priority": "medium",
+      "dependencies": [
+        9
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create CategoryCard Component",
+          "description": "Implement a reusable CategoryCard component with hover effects and selection styling",
+          "dependencies": [],
+          "details": "Create a styled component for CategoryCard that includes:\n- Base card styling with skeuomorphic design (shadows, embossing)\n- Hover state that displays the description tooltip\n- Selected state styling with visual indicator\n- Disabled state styling when track is not selected\n- Layout for icon, name, and tooltip positioning",
+          "status": "pending",
+          "testStrategy": "Test hover interactions and selection state changes using React Testing Library"
+        },
+        {
+          "id": 2,
+          "title": "Implement CategoryGrid Layout",
+          "description": "Create the grid layout container for displaying the category cards",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement a responsive grid layout that:\n- Arranges category cards in a visually appealing grid\n- Maintains proper spacing between cards\n- Adjusts layout for different screen sizes\n- Applies consistent styling with the game's design system\n- Includes the section heading",
+          "status": "pending",
+          "testStrategy": "Test responsive behavior at different viewport sizes"
+        },
+        {
+          "id": 3,
+          "title": "Connect Category Selection to Game State",
+          "description": "Implement the state management logic for category selection",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Integrate with the game context to:\n- Access the current game state (selectedTrack, currentTurn)\n- Implement handleCategorySelect function to dispatch SELECT_CATEGORY action\n- Conditionally enable/disable category selection based on game state\n- Update UI based on selected category\n- Handle edge cases like deselection or invalid selections",
+          "status": "pending",
+          "testStrategy": "Test state changes when categories are selected and verify proper conditional rendering"
+        },
+        {
+          "id": 4,
+          "title": "Add Category Icons and Visual Elements",
+          "description": "Implement the visual icons and styling for each category card",
+          "dependencies": [
+            1
+          ],
+          "details": "For each category:\n- Add appropriate emoji icons as specified in the categories array\n- Style the CategoryIcon component with embossed/3D effect\n- Ensure icons are properly sized and positioned\n- Implement consistent visual hierarchy between icon and text\n- Add subtle animations for hover/selection states",
+          "status": "pending",
+          "testStrategy": "Visual regression testing to ensure consistent appearance"
+        },
+        {
+          "id": 5,
+          "title": "Implement Tooltip Functionality",
+          "description": "Create the tooltip component to display category descriptions on hover",
+          "dependencies": [
+            1,
+            4
+          ],
+          "details": "Implement tooltip functionality that:\n- Shows category description on hover\n- Positions tooltip appropriately relative to the card\n- Handles edge cases (screen boundaries, mobile touch)\n- Applies appropriate styling and animations for appearing/disappearing\n- Ensures accessibility with proper ARIA attributes\n- Works correctly across different devices",
+          "status": "pending",
+          "testStrategy": "Test tooltip visibility on hover/touch and verify correct content is displayed for each category"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Implement Computer Player AI Logic",
+      "description": "Develop the AI logic for the computer opponent to make strategic decisions during gameplay.",
+      "details": "Implement the computer player AI with the following features:\n\n1. Strategic album selection based on overall strength across categories\n2. Track selection logic that evaluates potential success in different categories\n3. Category selection that maximizes win probability\n4. Include some randomness to prevent predictability\n\n```javascript\nconst computerTurn = async () => {\n  // Step 1: Select an album (with some randomness)\n  const selectedAlbum = selectComputerAlbum(state.computerAlbums);\n  dispatch({ type: 'SELECT_ALBUM', payload: selectedAlbum });\n  \n  // Simulate thinking time\n  await delay(1000);\n  \n  // Step 2: Select a track\n  const selectedTrack = selectComputerTrack(selectedAlbum);\n  dispatch({ type: 'SELECT_TRACK', payload: selectedTrack });\n  \n  await delay(1000);\n  \n  // Step 3: Select a category\n  const selectedCategory = selectComputerCategory(selectedTrack);\n  dispatch({ type: 'SELECT_CATEGORY', payload: selectedCategory });\n  \n  await delay(1000);\n  \n  // Complete the turn\n  const result = evaluateRound(state.selectedTrack, selectedTrack, selectedCategory);\n  dispatch({\n    type: 'COMPLETE_TURN',\n    payload: {\n      playerScore: result.playerWins ? state.playerScore + 1 : state.playerScore,\n      computerScore: result.computerWins ? state.computerScore + 1 : state.computerScore,\n      turnResult: {\n        playerTrack: state.selectedTrack,\n        computerTrack: selectedTrack,\n        category: selectedCategory,\n        winner: result.winner\n      }\n    }\n  });\n};\n\nconst selectComputerAlbum = (albums) => {\n  // 80% chance to pick strategically, 20% chance to pick randomly\n  if (Math.random() < 0.2) {\n    return albums[Math.floor(Math.random() * albums.length)];\n  }\n  \n  // Calculate album strength scores based on track stats\n  const albumScores = albums.map(album => ({\n    album,\n    score: calculateAlbumStrength(album)\n  }));\n  \n  // Sort by score and pick one of the top 3 (with some randomness)\n  albumScores.sort((a, b) => b.score - a.score);\n  const topPick = Math.floor(Math.random() * Math.min(3, albumScores.length));\n  return albumScores[topPick].album;\n};\n\n// Similar functions for track and category selection\n```\n\nImplement helper functions to calculate strength scores for albums and tracks across different categories.",
+      "testStrategy": "Create unit tests for each AI decision function. Test with various game states to ensure the AI makes reasonable decisions. Verify that the AI includes appropriate randomness while still making strategic choices. Test edge cases like when only certain categories would result in a win.",
+      "priority": "high",
+      "dependencies": [
+        6
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Album Strength Calculation Logic",
+          "description": "Create a function to calculate the overall strength of an album based on its tracks' statistics across all categories.",
+          "dependencies": [],
+          "details": "Implement the `calculateAlbumStrength` function that takes an album object and returns a numerical score. The function should: 1) Iterate through all tracks in the album, 2) Sum up the category values for each track, 3) Calculate an average or weighted score based on category importance, 4) Return a final numerical strength score. Consider adding a small random factor to prevent ties.",
+          "status": "pending",
+          "testStrategy": "Test with sample albums containing tracks with various stat distributions. Verify that albums with higher overall stats receive higher strength scores."
+        },
+        {
+          "id": 2,
+          "title": "Implement Computer Album Selection Logic",
+          "description": "Complete the `selectComputerAlbum` function to strategically choose an album with some randomness.",
+          "dependencies": [
+            1
+          ],
+          "details": "Enhance the existing `selectComputerAlbum` function to: 1) Use the `calculateAlbumStrength` function to score all available albums, 2) Implement the 80/20 strategy where 80% of the time it picks strategically and 20% randomly, 3) When picking strategically, select from the top 3 albums with some weighted randomness favoring the strongest, 4) Return the selected album object.",
+          "status": "pending",
+          "testStrategy": "Test with multiple runs to verify both strategic and random selections occur at roughly the expected ratio. Confirm that stronger albums are selected more frequently in strategic mode."
+        },
+        {
+          "id": 3,
+          "title": "Implement Track Selection Logic",
+          "description": "Create the `selectComputerTrack` function to choose the optimal track from the selected album.",
+          "dependencies": [
+            2
+          ],
+          "details": "Implement the `selectComputerTrack` function that: 1) Analyzes all tracks in the selected album, 2) Calculates a strength score for each track based on their category values, 3) Adds some randomness to prevent predictability (e.g., 70% chance to pick one of the top 3 tracks, 30% chance to pick randomly), 4) Returns the selected track object. Consider the current game state (e.g., remaining tracks) in the selection logic.",
+          "status": "pending",
+          "testStrategy": "Test with various album configurations to ensure the function selects tracks with higher overall stats more frequently while still exhibiting some randomness."
+        },
+        {
+          "id": 4,
+          "title": "Implement Category Selection Logic",
+          "description": "Create the `selectComputerCategory` function to strategically choose the category that maximizes win probability.",
+          "dependencies": [
+            3
+          ],
+          "details": "Implement the `selectComputerCategory` function that: 1) Analyzes the selected computer track's stats across all categories, 2) If player track is known, compares the computer track's stats against the player's track to identify the most favorable category, 3) If player track is unknown, selects the category where the computer track has the highest value, 4) Adds a small chance (10-15%) to pick a random category for unpredictability, 5) Returns the selected category string.",
+          "status": "pending",
+          "testStrategy": "Test with various track matchups to verify the function selects categories where the computer track has an advantage. Also test that occasionally non-optimal categories are selected for unpredictability."
+        },
+        {
+          "id": 5,
+          "title": "Integrate AI Logic into Game Flow",
+          "description": "Finalize the `computerTurn` function to orchestrate the AI decision-making process with appropriate timing and state updates.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Complete the `computerTurn` function to: 1) Call the implemented selection functions in sequence with appropriate delays to simulate thinking, 2) Dispatch the correct Redux actions after each decision, 3) Evaluate the round result and update scores, 4) Handle edge cases like when certain albums or tracks are no longer available, 5) Ensure the game state is properly updated after the computer's turn completes.",
+          "status": "pending",
+          "testStrategy": "Test the complete computer turn flow with various game states to ensure all actions are dispatched correctly and the game state transitions properly. Verify that delays work as expected and that the turn evaluation logic correctly determines winners."
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Implement Track Comparison Logic",
+      "description": "Develop the logic to compare two tracks based on the selected challenge category and determine the winner.",
+      "details": "Implement the track comparison logic for all five challenge categories:\n\n1. Top Chart Rank: Compare chart positions (lower is better)\n2. Most Plays: Compare Spotify play counts (higher is better)\n3. Least Plays: Compare Spotify play counts (lower is better)\n4. Oldest Track: Compare release dates (earlier is better)\n5. Newest Track: Compare release dates (later is better)\n\n```javascript\nconst compareTracksByCategory = (playerTrack, computerTrack, category) => {\n  switch (category.id) {\n    case 'chart_rank': {\n      // Lower chart position is better\n      const playerRank = playerTrack.chartPosition || Infinity;\n      const computerRank = computerTrack.chartPosition || Infinity;\n      \n      if (playerRank < computerRank) return { winner: 'player', reason: `${playerTrack.name} reached #${playerRank} vs #${computerRank}` };\n      if (computerRank < playerRank) return { winner: 'computer', reason: `${computerTrack.name} reached #${computerRank} vs #${playerRank}` };\n      return { winner: 'tie', reason: 'Both tracks reached the same chart position' };\n    }\n    \n    case 'most_plays': {\n      const playerPlays = playerTrack.playCount;\n      const computerPlays = computerTrack.playCount;\n      \n      if (playerPlays > computerPlays) return { winner: 'player', reason: `${playerTrack.name} has ${formatNumber(playerPlays)} plays vs ${formatNumber(computerPlays)}` };\n      if (computerPlays > playerPlays) return { winner: 'computer', reason: `${computerTrack.name} has ${formatNumber(computerPlays)} plays vs ${formatNumber(playerPlays)}` };\n      return { winner: 'tie', reason: 'Both tracks have the same number of plays' };\n    }\n    \n    case 'least_plays': {\n      const playerPlays = playerTrack.playCount;\n      const computerPlays = computerTrack.playCount;\n      \n      if (playerPlays < computerPlays) return { winner: 'player', reason: `${playerTrack.name} has only ${formatNumber(playerPlays)} plays vs ${formatNumber(computerPlays)}` };\n      if (computerPlays < playerPlays) return { winner: 'computer', reason: `${computerTrack.name} has only ${formatNumber(computerPlays)} plays vs ${formatNumber(playerPlays)}` };\n      return { winner: 'tie', reason: 'Both tracks have the same number of plays' };\n    }\n    \n    case 'oldest': {\n      const playerDate = new Date(playerTrack.releaseDate);\n      const computerDate = new Date(computerTrack.releaseDate);\n      \n      if (playerDate < computerDate) return { winner: 'player', reason: `${playerTrack.name} was released on ${formatDate(playerDate)} vs ${formatDate(computerDate)}` };\n      if (computerDate < playerDate) return { winner: 'computer', reason: `${computerTrack.name} was released on ${formatDate(computerDate)} vs ${formatDate(playerDate)}` };\n      return { winner: 'tie', reason: 'Both tracks were released on the same date' };\n    }\n    \n    case 'newest': {\n      const playerDate = new Date(playerTrack.releaseDate);\n      const computerDate = new Date(computerTrack.releaseDate);\n      \n      if (playerDate > computerDate) return { winner: 'player', reason: `${playerTrack.name} was released on ${formatDate(playerDate)} vs ${formatDate(computerDate)}` };\n      if (computerDate > playerDate) return { winner: 'computer', reason: `${computerTrack.name} was released on ${formatDate(computerDate)} vs ${formatDate(playerDate)}` };\n      return { winner: 'tie', reason: 'Both tracks were released on the same date' };\n    }\n    \n    default:\n      return { winner: 'tie', reason: 'Invalid category' };\n  }\n};\n```\n\nImplement helper functions for formatting numbers and dates to improve readability of comparison results.",
+      "testStrategy": "Create unit tests for each comparison category with various scenarios including clear wins, ties, and edge cases (missing data, extreme values). Test with mock track data that covers all possible comparison outcomes. Verify that the comparison logic correctly identifies winners and provides meaningful explanations.",
+      "priority": "high",
+      "dependencies": [
+        6
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement formatNumber helper function",
+          "description": "Create a helper function to format play count numbers with appropriate separators and abbreviations for better readability in comparison results.",
+          "dependencies": [],
+          "details": "Implement the formatNumber function that takes a number and returns a formatted string. For large numbers (millions+), use abbreviations like '1.2M'. For smaller numbers, use comma separators. Handle edge cases like null or undefined values by returning a default string.",
+          "status": "pending",
+          "testStrategy": "Test with various number ranges: small numbers, thousands, millions, billions, and edge cases like 0, null, and undefined."
+        },
+        {
+          "id": 2,
+          "title": "Implement formatDate helper function",
+          "description": "Create a helper function to format release dates in a consistent, readable format for comparison results.",
+          "dependencies": [],
+          "details": "Implement the formatDate function that takes a Date object and returns a formatted string in a user-friendly format (e.g., 'January 1, 2020'). Handle invalid dates and ensure consistent output regardless of input date format. Consider using Intl.DateTimeFormat for localization support.",
+          "status": "pending",
+          "testStrategy": "Test with various date inputs, including different formats, edge cases like invalid dates, and dates across different years."
+        },
+        {
+          "id": 3,
+          "title": "Implement chart rank and play count comparison logic",
+          "description": "Complete the implementation of the comparison logic for chart rank, most plays, and least plays categories.",
+          "dependencies": [
+            1
+          ],
+          "details": "Refine the existing switch cases for 'chart_rank', 'most_plays', and 'least_plays'. Ensure proper handling of edge cases like missing chart positions or play counts. Use the formatNumber helper function to format play counts in the reason messages. Add appropriate comments to explain the comparison logic.",
+          "status": "pending",
+          "testStrategy": "Test each category with various scenarios: player wins, computer wins, ties, and edge cases with missing data."
+        },
+        {
+          "id": 4,
+          "title": "Implement release date comparison logic",
+          "description": "Complete the implementation of the comparison logic for oldest and newest track categories.",
+          "dependencies": [
+            2
+          ],
+          "details": "Refine the existing switch cases for 'oldest' and 'newest'. Ensure proper date parsing and comparison. Handle edge cases like missing release dates or invalid date formats. Use the formatDate helper function to format dates in the reason messages. Add appropriate comments to explain the date comparison logic.",
+          "status": "pending",
+          "testStrategy": "Test with tracks having different release dates, same release dates, and missing or invalid release dates."
+        },
+        {
+          "id": 5,
+          "title": "Integrate and test the complete comparison function",
+          "description": "Finalize the compareTracksByCategory function by integrating all comparison logic and ensuring it handles all edge cases.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Review and refine the entire compareTracksByCategory function. Ensure consistent return object structure across all categories. Add input validation to check that both tracks and the category are valid before attempting comparison. Add comprehensive error handling. Optimize the code for readability and performance. Consider adding a debug mode that provides more detailed comparison information.",
+          "status": "pending",
+          "testStrategy": "Create comprehensive tests covering all five categories with various scenarios. Test with real-world track data. Verify that the function handles edge cases gracefully. Test performance with a large number of comparisons."
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "title": "Implement Simulated Track Playback UI",
+      "description": "Create a visual representation of track playback using turntable animation and album art display.",
+      "details": "Implement the simulated track playback UI with the following features:\n\n1. Animated turntable with spinning record\n2. Album art displayed as label on the vinyl record\n3. Track information display (title, artist, album)\n4. Visual play/pause controls (non-functional for MVP)\n\n```jsx\nconst TrackPlaybackUI = ({ track, isPlaying = true }) => {\n  if (!track) return null;\n  \n  return (\n    <PlaybackContainer>\n      <TurntableContainer>\n        <Turntable>\n          <Vinyl \n            isPlaying={isPlaying}\n            albumCover={track.album.images[0].url}\n          />\n          <ToneArm isPlaying={isPlaying} />\n        </Turntable>\n      </TurntableContainer>\n      \n      <TrackInfoContainer>\n        <TrackTitle>{track.name}</TrackTitle>\n        <TrackArtist>{track.artists[0].name}</TrackArtist>\n        <TrackAlbum>{track.album.name}</TrackAlbum>\n      </TrackInfoContainer>\n      \n      <PlaybackControls>\n        <PlayButton aria-label=\"Play\" />\n        <PauseButton aria-label=\"Pause\" />\n      </PlaybackControls>\n    </PlaybackContainer>\n  );\n};\n\nconst ToneArm = styled.div`\n  position: absolute;\n  top: 50px;\n  right: 50px;\n  width: 100px;\n  height: 10px;\n  background-color: #999;\n  transform-origin: right center;\n  transform: ${props => props.isPlaying ? 'rotate(30deg)' : 'rotate(0deg)'};\n  transition: transform 0.5s ease;\n  \n  &::before {\n    content: '';\n    position: absolute;\n    right: 0;\n    top: -5px;\n    width: 20px;\n    height: 20px;\n    border-radius: 50%;\n    background-color: #777;\n  }\n  \n  &::after {\n    content: '';\n    position: absolute;\n    left: 0;\n    top: -2px;\n    width: 5px;\n    height: 14px;\n    background-color: #555;\n  }\n`;\n```\n\nImplement smooth transitions between different tracks and ensure the animation runs at a consistent frame rate.",
+      "testStrategy": "Test the playback UI with various album art images to ensure proper display. Verify that animations run smoothly across different browsers and devices. Test with and without track data to ensure proper handling of null/undefined values. Ensure the UI is accessible and provides appropriate ARIA attributes.",
+      "priority": "medium",
+      "dependencies": [
+        7
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Vinyl Record Component with Album Art",
+          "description": "Implement the Vinyl component that displays a spinning record with the album art as the label.",
+          "dependencies": [],
+          "details": "Create a styled component for the vinyl record that accepts album art URL and isPlaying props. Implement CSS animations for the spinning effect that activates when isPlaying is true. Use a circular container with the album art centered in the middle to simulate a vinyl record with label. Add appropriate styling for the vinyl grooves and outer edge.",
+          "status": "pending",
+          "testStrategy": "Test the component renders correctly with different album art. Verify the animation starts and stops based on the isPlaying prop."
+        },
+        {
+          "id": 2,
+          "title": "Implement ToneArm Component with Animation",
+          "description": "Complete the ToneArm component with proper positioning and animation when playback state changes.",
+          "dependencies": [],
+          "details": "Refine the existing ToneArm styled component to ensure proper positioning relative to the vinyl record. Implement smooth animation for the tone arm movement when transitioning between playing and paused states. Add additional styling details to make the tone arm look realistic.",
+          "status": "pending",
+          "testStrategy": "Test that the tone arm animates correctly when isPlaying changes. Verify the positioning is correct in relation to the vinyl record."
+        },
+        {
+          "id": 3,
+          "title": "Create Track Information Display",
+          "description": "Implement the TrackInfoContainer component to display track title, artist, and album information.",
+          "dependencies": [],
+          "details": "Create styled components for TrackInfoContainer, TrackTitle, TrackArtist, and TrackAlbum. Implement responsive layout that displays the track information clearly. Add appropriate typography and spacing. Ensure text truncation for long titles/names with ellipsis.",
+          "status": "pending",
+          "testStrategy": "Test with various track data including long titles and artist names to ensure proper display and truncation."
+        },
+        {
+          "id": 4,
+          "title": "Implement Visual Play/Pause Controls",
+          "description": "Create the visual play/pause button components for the playback UI.",
+          "dependencies": [],
+          "details": "Implement PlayButton and PauseButton styled components with appropriate icons. Style the buttons to match the vintage turntable aesthetic. Add hover and focus states for better user experience. For MVP, these will be visual-only without actual functionality.",
+          "status": "pending",
+          "testStrategy": "Verify buttons render correctly and have appropriate accessibility attributes. Test hover and focus states work as expected."
+        },
+        {
+          "id": 5,
+          "title": "Integrate Components with Smooth Transitions",
+          "description": "Assemble all components into the TrackPlaybackUI and implement smooth transitions between tracks.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Create the PlaybackContainer and TurntableContainer styled components. Integrate all previously built components (Vinyl, ToneArm, TrackInfo, PlaybackControls). Implement transition effects when track data changes to ensure smooth animation between different tracks. Add logic to handle edge cases like missing album art or track information. Optimize animations to maintain consistent frame rate.",
+          "status": "pending",
+          "testStrategy": "Test the complete component with various track data. Verify transitions between tracks are smooth. Test with missing data to ensure graceful fallbacks. Check performance on different devices to ensure consistent animation frame rate."
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Implement Game Feedback System",
+      "description": "Create a system to provide clear visual and textual feedback on game actions and outcomes.",
+      "details": "Implement the game feedback system with the following features:\n\n1. Visual indication of current player turn\n2. Detailed explanation of comparison outcomes\n3. Score display and updates\n4. Game history log\n5. Visual and audio cues for important events\n\n```jsx\nconst GameFeedback = () => {\n  const { state } = useGameContext();\n  const { playerScore, computerScore, currentTurn, gameHistory } = state;\n  \n  return (\n    <FeedbackContainer>\n      <ScoreDisplay>\n        <PlayerScore>You: {playerScore}</PlayerScore>\n        <ComputerScore>Computer: {computerScore}</ComputerScore>\n      </ScoreDisplay>\n      \n      <TurnIndicator currentTurn={currentTurn}>\n        {currentTurn === 'player' ? 'Your Turn' : 'Computer\\'s Turn'}\n      </TurnIndicator>\n      \n      {gameHistory.length > 0 && (\n        <OutcomeDisplay>\n          <h3>Last Round</h3>\n          <OutcomeDetails>\n            {renderOutcomeDetails(gameHistory[gameHistory.length - 1])}\n          </OutcomeDetails>\n        </OutcomeDisplay>\n      )}\n      \n      <GameHistoryLog>\n        <h3>Game History</h3>\n        <HistoryList>\n          {gameHistory.map((turn, index) => (\n            <HistoryItem key={index} winner={turn.winner}>\n              Round {index + 1}: {turn.category.name} - \n              {turn.winner === 'player' ? 'You won' : turn.winner === 'computer' ? 'Computer won' : 'Tie'}\n            </HistoryItem>\n          ))}\n        </HistoryList>\n      </GameHistoryLog>\n    </FeedbackContainer>\n  );\n};\n\nconst renderOutcomeDetails = (turn) => {\n  if (!turn) return null;\n  \n  return (\n    <>\n      <p>\n        <strong>Category:</strong> {turn.category.name}\n      </p>\n      <p>\n        <strong>Your track:</strong> {turn.playerTrack.name} by {turn.playerTrack.artists[0].name}\n      </p>\n      <p>\n        <strong>Computer's track:</strong> {turn.computerTrack.name} by {turn.computerTrack.artists[0].name}\n      </p>\n      <p>\n        <strong>Result:</strong> {turn.reason}\n      </p>\n      <WinnerBadge winner={turn.winner}>\n        {turn.winner === 'player' ? 'You won this round!' : \n         turn.winner === 'computer' ? 'Computer won this round!' : 'This round was a tie!'}\n      </WinnerBadge>\n    </>\n  );\n};\n```\n\nImplement animations for score updates and outcome displays to draw attention to important changes.",
+      "testStrategy": "Test the feedback system with various game states and outcomes. Verify that all information is displayed correctly and updates in real-time. Test with edge cases like ties and very long track/artist names. Ensure the feedback is accessible to screen readers and provides sufficient context for all game events.",
+      "priority": "medium",
+      "dependencies": [
+        12
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Turn Indicator with Visual Styling",
+          "description": "Create a visually distinct turn indicator component that clearly shows which player's turn it is currently.",
+          "dependencies": [],
+          "details": "Enhance the TurnIndicator component with conditional styling based on currentTurn state. Add a pulsing animation effect for the active player. Use contrasting colors for player vs computer turns. Ensure the component is accessible with appropriate aria attributes.",
+          "status": "pending",
+          "testStrategy": "Test that the component renders correctly for both player and computer turns. Verify that animations work as expected and that the component updates when the turn changes."
+        },
+        {
+          "id": 2,
+          "title": "Develop Animated Score Display",
+          "description": "Create an animated score display that visually emphasizes score changes when they occur.",
+          "dependencies": [],
+          "details": "Modify the ScoreDisplay component to track previous scores and animate transitions when scores change. Implement a subtle scaling or highlighting effect when a player's score increases. Use CSS transitions or React Spring for smooth animations. Add a celebratory effect for milestone scores (e.g., every 5 points).",
+          "status": "pending",
+          "testStrategy": "Test score display with various score values. Verify animations trigger correctly when scores change. Check that the component handles edge cases like very high scores."
+        },
+        {
+          "id": 3,
+          "title": "Create Detailed Outcome Explanation Component",
+          "description": "Enhance the outcome display to provide clear, detailed explanations of comparison results with visual emphasis.",
+          "dependencies": [
+            1
+          ],
+          "details": "Expand the renderOutcomeDetails function to include more detailed comparisons between tracks. Add visual indicators showing the specific values being compared (e.g., danceability, energy). Implement a slide-in animation when new outcomes are displayed. Use icons or visual cues to highlight the winning attribute. Style the WinnerBadge component with appropriate colors and animations based on the outcome.",
+          "status": "pending",
+          "testStrategy": "Test with various outcome scenarios (player win, computer win, tie). Verify that all track details display correctly and that animations work as expected."
+        },
+        {
+          "id": 4,
+          "title": "Implement Scrollable Game History Log with Filtering",
+          "description": "Create a scrollable, filterable game history log that maintains a record of all game actions and outcomes.",
+          "dependencies": [
+            3
+          ],
+          "details": "Enhance the GameHistoryLog component to support scrolling for long game sessions. Add the ability to filter history by outcome (wins, losses, ties). Implement subtle animations for new entries being added to the history. Use virtualization for performance if the history becomes very long. Add timestamps to history entries. Style history items differently based on outcome.",
+          "status": "pending",
+          "testStrategy": "Test with various history lengths to ensure scrolling works properly. Verify filtering functionality works correctly. Check that new entries are added with the expected animation."
+        },
+        {
+          "id": 5,
+          "title": "Add Audio Feedback and Notification System",
+          "description": "Implement audio cues and visual notifications for important game events to enhance user feedback.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "Create a notification system that plays appropriate sounds for wins, losses, ties, and other significant events. Add subtle sound effects for user interactions (e.g., selecting a card). Implement toast-style notifications for important events that appear briefly and then fade out. Ensure all audio elements have proper controls and respect user preferences. Add a mute toggle option. Create visual equivalents for all audio cues for accessibility.",
+          "status": "pending",
+          "testStrategy": "Test that audio plays correctly for different game events. Verify that notifications appear and disappear as expected. Test with audio muted to ensure visual cues still provide adequate feedback."
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "title": "Implement Core Gameplay Loop",
+      "description": "Integrate all components to create the complete turn-based gameplay experience from start to finish.",
+      "details": "Implement the core gameplay loop with the following features:\n\n1. Game initialization with player and computer album hands\n2. Turn-based gameplay alternating between player and computer\n3. Win condition check (first to 10 points)\n4. Game completion and result display\n\n```jsx\nconst GameScreen = () => {\n  const { state, dispatch } = useGameContext();\n  const { gameStatus, currentTurn, playerScore, computerScore, winner } = state;\n  \n  // Initialize game on component mount\n  useEffect(() => {\n    const initializeGame = async () => {\n      try {\n        // Get player's albums from Spotify\n        const playerAlbums = await generateAlbumHand();\n        \n        // Get computer's pre-defined album collection\n        const computerAlbums = getComputerAlbums();\n        \n        dispatch({\n          type: 'INITIALIZE_GAME',\n          payload: { playerAlbums, computerAlbums }\n        });\n      } catch (error) {\n        console.error('Failed to initialize game:', error);\n        // Handle error state\n      }\n    };\n    \n    if (gameStatus === 'idle') {\n      initializeGame();\n    }\n  }, [gameStatus, dispatch]);\n  \n  // Handle computer's turn\n  useEffect(() => {\n    if (gameStatus === 'playing' && currentTurn === 'computer') {\n      const performComputerTurn = async () => {\n        await computerTurn();\n        \n        // Check for win condition after computer's turn\n        if (playerScore >= 10 || computerScore >= 10) {\n          dispatch({\n            type: 'END_GAME',\n            payload: { winner: playerScore >= 10 ? 'player' : 'computer' }\n          });\n        }\n      };\n      \n      performComputerTurn();\n    }\n  }, [gameStatus, currentTurn, playerScore, computerScore, dispatch]);\n  \n  // Check for win condition after player's turn\n  useEffect(() => {\n    if (gameStatus === 'playing' && playerScore >= 10) {\n      dispatch({\n        type: 'END_GAME',\n        payload: { winner: 'player' }\n      });\n    } else if (gameStatus === 'playing' && computerScore >= 10) {\n      dispatch({\n        type: 'END_GAME',\n        payload: { winner: 'computer' }\n      });\n    }\n  }, [gameStatus, playerScore, computerScore, dispatch]);\n  \n  if (gameStatus === 'idle') {\n    return <LoadingScreen message=\"Preparing your album collection...\" />;\n  }\n  \n  if (gameStatus === 'completed') {\n    return <GameOverScreen winner={winner} />;\n  }\n  \n  return (\n    <GameContainer>\n      <GameBoard>\n        <PlayerSection>\n          <AlbumSelectionInterface />\n          <TrackSelectionInterface />\n          <CategorySelectionInterface />\n        </PlayerSection>\n        \n        <GameplaySection>\n          <TrackPlaybackUI track={state.selectedTrack} />\n          <GameFeedback />\n        </GameplaySection>\n        \n        <ComputerSection>\n          {/* Display computer's current selection if any */}\n        </ComputerSection>\n      </GameBoard>\n      \n      <GameControls>\n        <Button onClick={() => handlePlayTurn()}>Play Turn</Button>\n      </GameControls>\n    </GameContainer>\n  );\n};\n```\n\nImplement the `handlePlayTurn` function to process the player's selections and update the game state accordingly.",
+      "testStrategy": "Test the complete gameplay loop from start to finish. Verify that turns alternate correctly between player and computer. Test win conditions to ensure the game ends appropriately when a player reaches 10 points. Test edge cases like ties and ensure the game handles them correctly. Conduct end-to-end testing of the full game experience.",
+      "priority": "high",
+      "dependencies": [
+        6,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Game Initialization Logic",
+          "description": "Create the initialization logic that sets up the game state with player and computer album hands.",
+          "dependencies": [],
+          "details": "Complete the `initializeGame` function to properly fetch player albums from Spotify API and set up computer albums. Ensure proper error handling and loading states. Update the game context with initial album collections, set game status to 'playing', and initialize scores to 0.",
+          "status": "pending",
+          "testStrategy": "Test with mock Spotify API responses to verify proper initialization of game state."
+        },
+        {
+          "id": 2,
+          "title": "Implement Player Turn Logic in handlePlayTurn",
+          "description": "Create the handlePlayTurn function that processes player selections and updates the game state.",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement the handlePlayTurn function to: 1) Validate that player has selected an album, track, and category, 2) Compare the selected track's attribute against computer's selection, 3) Determine the winner of the turn based on category comparison, 4) Update scores accordingly, 5) Switch turn to computer, and 6) Update the game state with the results of the turn.",
+          "status": "pending",
+          "testStrategy": "Test with different selection scenarios to ensure correct score calculation and turn switching."
+        },
+        {
+          "id": 3,
+          "title": "Implement Computer Turn Logic",
+          "description": "Complete the computerTurn function to handle the computer's decision-making and turn execution.",
+          "dependencies": [
+            2
+          ],
+          "details": "Implement the computerTurn function to: 1) Select an album from computer's collection using a strategy (random or weighted), 2) Choose a track from the selected album, 3) Select a category that maximizes winning chance based on track attributes, 4) Compare against player's last selection or make a standalone choice, 5) Update scores based on comparison, and 6) Switch turn back to player. Add a delay to simulate computer thinking.",
+          "status": "pending",
+          "testStrategy": "Test with predetermined computer albums to verify selection logic and score updates."
+        },
+        {
+          "id": 4,
+          "title": "Implement Win Condition Checking",
+          "description": "Refactor win condition checking into a separate function and ensure it's called at appropriate times.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "Create a checkWinCondition function that: 1) Evaluates if either player or computer has reached 10 points, 2) Determines the winner if win condition is met, 3) Updates game status to 'completed' when appropriate, and 4) Sets the winner in the game state. Call this function after both player and computer turns to ensure consistent checking.",
+          "status": "pending",
+          "testStrategy": "Test with game states near win conditions (9-9 scores, 10-8 scores) to verify proper game completion."
+        },
+        {
+          "id": 5,
+          "title": "Implement Game Over Screen and Restart Functionality",
+          "description": "Complete the GameOverScreen component and add ability to restart the game.",
+          "dependencies": [
+            4
+          ],
+          "details": "Implement the GameOverScreen component to: 1) Display the winner with appropriate messaging, 2) Show final scores, 3) Highlight best plays from the game, 4) Provide a 'Play Again' button that resets the game state to idle, and 5) Optionally save game statistics. Add a resetGame action to the game reducer that returns the state to initial values while preserving any user preferences.",
+          "status": "pending",
+          "testStrategy": "Test the restart functionality to ensure game properly resets to initial state without requiring page refresh."
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "title": "Implement Game Over Screen",
+      "description": "Create a game over screen that displays the final result and offers options to play again or return to the home screen.",
+      "details": "Implement the game over screen with the following features:\n\n1. Display final score and winner announcement\n2. Show game statistics (categories played, most successful category)\n3. Provide options to play again or return to home screen\n4. Visual celebration for player wins\n\n```jsx\nconst GameOverScreen = ({ winner }) => {\n  const { state, dispatch } = useGameContext();\n  const { playerScore, computerScore, gameHistory } = state;\n  \n  const handlePlayAgain = () => {\n    dispatch({ type: 'RESET_GAME' });\n  };\n  \n  const calculateStats = () => {\n    // Calculate most successful category for player\n    const categoryCounts = {};\n    const categoryWins = {};\n    \n    gameHistory.forEach(turn => {\n      const categoryId = turn.category.id;\n      categoryCounts[categoryId] = (categoryCounts[categoryId] || 0) + 1;\n      \n      if (turn.winner === 'player') {\n        categoryWins[categoryId] = (categoryWins[categoryId] || 0) + 1;\n      }\n    });\n    \n    let bestCategory = null;\n    let bestWinRate = 0;\n    \n    Object.keys(categoryCounts).forEach(categoryId => {\n      const winRate = categoryWins[categoryId] / categoryCounts[categoryId] || 0;\n      if (winRate > bestWinRate) {\n        bestWinRate = winRate;\n        bestCategory = categoryId;\n      }\n    });\n    \n    return {\n      totalRounds: gameHistory.length,\n      bestCategory: bestCategory,\n      bestCategoryName: categories.find(c => c.id === bestCategory)?.name || 'None',\n      bestCategoryWinRate: Math.round(bestWinRate * 100)\n    };\n  };\n  \n  const stats = calculateStats();\n  \n  return (\n    <GameOverContainer winner={winner === 'player'}>\n      <GameOverHeader>\n        {winner === 'player' ? '🎉 You Win! 🎉' : 'Game Over'}\n      </GameOverHeader>\n      \n      <FinalScore>\n        <PlayerFinalScore>You: {playerScore}</PlayerFinalScore>\n        <ComputerFinalScore>Computer: {computerScore}</ComputerFinalScore>\n      </FinalScore>\n      \n      <GameStats>\n        <h3>Game Statistics</h3>\n        <StatItem>Total Rounds: {stats.totalRounds}</StatItem>\n        <StatItem>Your Best Category: {stats.bestCategoryName} ({stats.bestCategoryWinRate}% win rate)</StatItem>\n      </GameStats>\n      \n      <GameOverControls>\n        <PlayAgainButton onClick={handlePlayAgain}>Play Again</PlayAgainButton>\n        <HomeButton onClick={() => navigate('/')}>Home</HomeButton>\n      </GameOverControls>\n    </GameOverContainer>\n  );\n};\n```\n\nImplement confetti animation for player wins using a library like `react-confetti`.",
+      "testStrategy": "Test the game over screen with different game outcomes (player win, computer win). Verify that statistics are calculated and displayed correctly. Test the play again functionality to ensure it properly resets the game state. Ensure the screen is visually appealing and provides clear feedback on the game result.",
+      "priority": "medium",
+      "dependencies": [
+        15
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create GameOverScreen Component Structure",
+          "description": "Set up the basic structure of the GameOverScreen component with proper styling and layout.",
+          "dependencies": [],
+          "details": "Create the GameOverScreen component with styled components for GameOverContainer, GameOverHeader, FinalScore, GameStats, and GameOverControls. Implement responsive design for different screen sizes. Set up the component to receive the winner prop and access game state through useGameContext.",
+          "status": "pending",
+          "testStrategy": "Verify component renders correctly with different screen sizes and properly receives props."
+        },
+        {
+          "id": 2,
+          "title": "Implement Score Display and Winner Announcement",
+          "description": "Display the final score and winner announcement with appropriate styling.",
+          "dependencies": [],
+          "details": "Create the FinalScore component with PlayerFinalScore and ComputerFinalScore styled components. Implement conditional styling based on the winner (player or computer). Add a prominent header announcing the winner with appropriate text and styling.",
+          "status": "pending",
+          "testStrategy": "Test with different score combinations to ensure correct winner is displayed. Verify styling changes appropriately based on winner."
+        },
+        {
+          "id": 3,
+          "title": "Develop Game Statistics Calculation and Display",
+          "description": "Calculate and display game statistics including total rounds played, most successful category, and win rate.",
+          "dependencies": [],
+          "details": "Implement the calculateStats function to analyze gameHistory data. Calculate total rounds played, identify the player's best category, and determine win rate for that category. Create styled StatItem components to display these statistics in a clear, readable format.",
+          "status": "pending",
+          "testStrategy": "Test with various game history scenarios to ensure statistics are calculated correctly. Verify edge cases like no wins or tied categories."
+        },
+        {
+          "id": 4,
+          "title": "Add Play Again and Home Navigation Controls",
+          "description": "Implement buttons for playing again or returning to the home screen with appropriate actions.",
+          "dependencies": [],
+          "details": "Create PlayAgainButton and HomeButton styled components. Implement handlePlayAgain function to dispatch a RESET_GAME action to the game context. Add navigation functionality to return to the home screen using React Router's navigate function. Ensure buttons have appropriate hover and active states.",
+          "status": "pending",
+          "testStrategy": "Verify clicking Play Again resets the game state correctly. Confirm Home button navigates to the correct route."
+        },
+        {
+          "id": 5,
+          "title": "Implement Confetti Animation for Player Wins",
+          "description": "Add a celebratory confetti animation that displays when the player wins the game.",
+          "dependencies": [],
+          "details": "Install and integrate the react-confetti library. Create a conditional rendering of the Confetti component that only appears when winner === 'player'. Configure the confetti with appropriate settings for density, colors, and duration. Ensure the animation doesn't interfere with other UI elements.",
+          "status": "pending",
+          "testStrategy": "Test that confetti only appears for player wins and not for computer wins. Verify the animation performs well on different devices and doesn't cause performance issues."
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "title": "Implement Home Screen and Navigation",
+      "description": "Create a home screen with game logo, start button, and basic navigation between screens.",
+      "details": "Implement the home screen with the following features:\n\n1. Game logo and title display\n2. Start game button that initiates Spotify authentication\n3. Basic information about the game\n4. Navigation between home, game, and about screens\n\n```jsx\nconst HomeScreen = () => {\n  const navigate = useNavigate();\n  const { isAuthenticated } = useSpotifyAuth();\n  \n  const handleStartGame = () => {\n    if (isAuthenticated) {\n      navigate('/game');\n    } else {\n      // Redirect to Spotify login\n      window.location.href = getSpotifyAuthUrl();\n    }\n  };\n  \n  return (\n    <HomeContainer>\n      <LogoContainer>\n        <GameLogo src=\"/assets/logo.png\" alt=\"UMG Track Battle Logo\" />\n        <GameTitle>UMG Track Battle</GameTitle>\n      </LogoContainer>\n      \n      <GameDescription>\n        Test your music knowledge in this card-based music game featuring tracks from Universal Music Group's vast catalog.\n      </GameDescription>\n      \n      <StartButton onClick={handleStartGame}>\n        {isAuthenticated ? 'Start Game' : 'Login with Spotify'}\n      </StartButton>\n      \n      <NavigationLinks>\n        <NavLink to=\"/about\">About</NavLink>\n        <NavLink to=\"/how-to-play\">How to Play</NavLink>\n      </NavigationLinks>\n    </HomeContainer>\n  );\n};\n\nconst AppRouter = () => {\n  return (\n    <Router>\n      <Routes>\n        <Route path=\"/\" element={<HomeScreen />} />\n        <Route path=\"/game\" element={<ProtectedRoute><GameScreen /></ProtectedRoute>} />\n        <Route path=\"/about\" element={<AboutScreen />} />\n        <Route path=\"/how-to-play\" element={<HowToPlayScreen />} />\n        <Route path=\"/callback\" element={<SpotifyCallback />} />\n      </Routes>\n    </Router>\n  );\n};\n```\n\nImplement a `ProtectedRoute` component to ensure only authenticated users can access the game screen.",
+      "testStrategy": "Test navigation between all screens. Verify that unauthenticated users are redirected to Spotify login when attempting to start the game. Test the authentication callback handling. Ensure the home screen is visually appealing and responsive across different devices.",
+      "priority": "medium",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create HomeScreen UI Components",
+          "description": "Implement the UI components for the home screen including styled containers, logo display, game title, and description.",
+          "dependencies": [],
+          "details": "Create styled components for HomeContainer, LogoContainer, GameLogo, GameTitle, GameDescription, StartButton, and NavigationLinks. Style these components according to the game's visual identity. Ensure the logo image is properly loaded and displayed. Make the layout responsive for different screen sizes.",
+          "status": "pending",
+          "testStrategy": "Verify components render correctly across different screen sizes. Test image loading fallbacks."
+        },
+        {
+          "id": 2,
+          "title": "Implement Spotify Authentication Logic",
+          "description": "Create the authentication logic for Spotify integration, including the getSpotifyAuthUrl function and useSpotifyAuth hook.",
+          "dependencies": [],
+          "details": "Implement the useSpotifyAuth hook to manage authentication state. Create the getSpotifyAuthUrl function to generate the proper OAuth URL for Spotify. Store authentication tokens securely and handle token refresh. Implement logic to check if the user is already authenticated.",
+          "status": "pending",
+          "testStrategy": "Test authentication flow with mock Spotify responses. Verify token storage and retrieval works correctly."
+        },
+        {
+          "id": 3,
+          "title": "Create ProtectedRoute Component",
+          "description": "Implement a ProtectedRoute component that redirects unauthenticated users to the home screen.",
+          "dependencies": [
+            2
+          ],
+          "details": "Create a ProtectedRoute component that wraps route elements requiring authentication. Use the useSpotifyAuth hook to check authentication status. Redirect unauthenticated users to the home page with an appropriate message. Include a loading state while checking authentication.",
+          "status": "pending",
+          "testStrategy": "Test with both authenticated and unauthenticated user states to verify proper redirects."
+        },
+        {
+          "id": 4,
+          "title": "Implement Navigation and Routing",
+          "description": "Set up the AppRouter component with all required routes and navigation between screens.",
+          "dependencies": [
+            3
+          ],
+          "details": "Implement the AppRouter component with Routes for home, game, about, how-to-play, and callback pages. Ensure the ProtectedRoute component is properly applied to the game route. Create placeholder components for screens that haven't been implemented yet. Set up the SpotifyCallback component to handle the OAuth redirect.",
+          "status": "pending",
+          "testStrategy": "Test navigation between all routes. Verify protected routes behave correctly for both authenticated and unauthenticated users."
+        },
+        {
+          "id": 5,
+          "title": "Connect HomeScreen to Navigation and Auth",
+          "description": "Finalize the HomeScreen component by connecting it to the navigation system and authentication logic.",
+          "dependencies": [
+            1,
+            2,
+            4
+          ],
+          "details": "Implement the handleStartGame function to check authentication status and navigate appropriately. Connect the StartButton to this handler. Ensure the button text changes based on authentication status. Implement the NavigationLinks to use the router's navigation. Add any final polish to the home screen UI and interactions.",
+          "status": "pending",
+          "testStrategy": "Test the complete user flow from home screen to game start, including authentication. Verify all navigation links work correctly."
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "title": "Implement Data Caching and Persistence",
+      "description": "Implement efficient caching and persistence of game data to improve performance and enable offline functionality.",
+      "details": "Implement data caching and persistence with the following features:\n\n1. Local storage of authentication tokens\n2. Caching of album and track data\n3. Persistence of game state between sessions\n4. Handling of offline scenarios\n\n```javascript\n// Cache service for storing and retrieving data\nconst cacheService = {\n  // Set item with optional expiration\n  setItem: (key, value, expirationMinutes = 60) => {\n    const item = {\n      value,\n      expiry: expirationMinutes ? Date.now() + expirationMinutes * 60 * 1000 : null\n    };\n    localStorage.setItem(key, JSON.stringify(item));\n  },\n  \n  // Get item (returns null if expired)\n  getItem: (key) => {\n    const itemStr = localStorage.getItem(key);\n    if (!itemStr) return null;\n    \n    try {\n      const item = JSON.parse(itemStr);\n      if (item.expiry && Date.now() > item.expiry) {\n        localStorage.removeItem(key);\n        return null;\n      }\n      return item.value;\n    } catch (error) {\n      console.error('Error parsing cached item:', error);\n      return null;\n    }\n  },\n  \n  // Remove item\n  removeItem: (key) => {\n    localStorage.removeItem(key);\n  },\n  \n  // Clear all cached items\n  clear: () => {\n    localStorage.clear();\n  }\n};\n\n// Enhanced Spotify service with caching\nconst getRecentlyPlayedTracks = async (limit = 50) => {\n  const cacheKey = `recently-played-${limit}`;\n  const cachedTracks = cacheService.getItem(cacheKey);\n  \n  if (cachedTracks) {\n    return cachedTracks;\n  }\n  \n  try {\n    const response = await axios.get(\n      `https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`,\n      {\n        headers: {\n          Authorization: `Bearer ${getAccessToken()}`\n        }\n      }\n    );\n    \n    // Cache for 15 minutes\n    cacheService.setItem(cacheKey, response.data.items, 15);\n    return response.data.items;\n  } catch (error) {\n    // If offline, try to use older cached data even if expired\n    if (!navigator.onLine) {\n      const expiredCache = localStorage.getItem(cacheKey);\n      if (expiredCache) {\n        try {\n          return JSON.parse(expiredCache).value;\n        } catch (e) {\n          console.error('Error parsing expired cache:', e);\n        }\n      }\n    }\n    \n    handleApiError(error);\n    throw error;\n  }\n};\n\n// Game state persistence\nconst saveGameState = (state) => {\n  cacheService.setItem('game-state', state, 1440); // Cache for 24 hours\n};\n\nconst loadGameState = () => {\n  return cacheService.getItem('game-state');\n};\n```\n\nImplement a mechanism to detect when the application comes back online and refresh cached data.",
+      "testStrategy": "Test caching with various network conditions including offline mode. Verify that cached data is correctly retrieved when the same request is made multiple times. Test expiration of cached items. Ensure game state is correctly saved and restored between sessions. Test the offline fallback mechanism to ensure it provides a degraded but functional experience.",
+      "priority": "medium",
+      "dependencies": [
+        3,
+        6
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Authentication Token Storage",
+          "description": "Create a secure mechanism for storing and retrieving authentication tokens in local storage with proper expiration handling.",
+          "dependencies": [],
+          "details": "Extend the cacheService to include specific methods for auth token management: storeAuthToken(), getAuthToken(), and clearAuthToken(). Implement token refresh logic that checks expiration before each API call. Add encryption for token storage using a library like crypto-js. Include automatic token refresh when expired tokens are detected.",
+          "status": "pending",
+          "testStrategy": "Test token storage, retrieval, expiration handling, and refresh mechanisms. Create mock authentication responses and verify proper storage/retrieval. Test edge cases like token expiration and failed refresh attempts."
+        },
+        {
+          "id": 2,
+          "title": "Implement Album and Track Data Caching",
+          "description": "Enhance the Spotify service to cache album and track data with appropriate expiration times and fallback mechanisms for offline use.",
+          "dependencies": [],
+          "details": "Modify all Spotify API service methods to check cache before making network requests. Implement cache invalidation strategies based on data type (recently played: 15min, album details: 1hr, user profile: 24hrs). Create a batch prefetching mechanism for related content. Add compression for larger datasets using libraries like lz-string to optimize storage space.",
+          "status": "pending",
+          "testStrategy": "Test cache hit/miss scenarios, expiration handling, and offline fallbacks. Verify that API calls are not made when valid cached data exists. Test storage limits and compression efficiency with large datasets."
+        },
+        {
+          "id": 3,
+          "title": "Implement Game State Persistence",
+          "description": "Create a robust system for saving and loading game state between sessions, including score, progress, and user preferences.",
+          "dependencies": [],
+          "details": "Develop a GameStateManager class with methods for saveState(), loadState(), and resetState(). Implement automatic state saving at key game events (level completion, score changes, etc.). Create a state migration system to handle app updates that change state structure. Add state validation to prevent loading corrupted data. Include versioning for saved states to handle schema changes.",
+          "status": "pending",
+          "testStrategy": "Test state persistence across page reloads and browser restarts. Verify that all game progress components are properly saved and restored. Test migration of older state formats and handling of corrupted state data."
+        },
+        {
+          "id": 4,
+          "title": "Implement Offline Mode Handling",
+          "description": "Create a comprehensive offline mode that detects connectivity status and provides appropriate functionality when offline.",
+          "dependencies": [],
+          "details": "Implement a NetworkStatusService that monitors online/offline status using navigator.onLine and network event listeners. Create an OfflineQueue to store actions that require connectivity (e.g., submitting scores) for later execution. Develop UI indicators that show offline status and limited functionality. Implement graceful degradation of features when offline, prioritizing gameplay over online-dependent features.",
+          "status": "pending",
+          "testStrategy": "Test offline detection accuracy and UI updates. Verify that offline queued actions are properly executed when connectivity is restored. Test transition between online and offline states during different app operations."
+        },
+        {
+          "id": 5,
+          "title": "Implement Online Reconnection and Cache Refresh",
+          "description": "Create a system to detect when the application comes back online and intelligently refresh cached data.",
+          "dependencies": [],
+          "details": "Implement an event-based system that triggers when the app regains connectivity. Create a CacheRefreshManager that prioritizes which data to refresh first (auth tokens, game state, then content). Add a background sync mechanism using the Background Sync API where supported. Implement progressive data refresh to avoid overwhelming the API on reconnection. Add user controls to manually trigger refresh when needed.",
+          "status": "pending",
+          "testStrategy": "Test reconnection detection and automatic cache refresh. Verify that stale data is properly updated when coming back online. Test the prioritization system to ensure critical data is refreshed first. Test manual refresh controls and background sync functionality."
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "title": "Implement Performance Optimizations",
+      "description": "Optimize the application for performance, ensuring smooth animations and minimal loading times.",
+      "details": "Implement performance optimizations with the following techniques:\n\n1. Code splitting and lazy loading of components\n2. Image optimization and lazy loading\n3. Memoization of expensive calculations\n4. Efficient rendering with React.memo and useMemo\n5. Debouncing of frequent events\n\n```javascript\n// Lazy loading of screens\nconst GameScreen = React.lazy(() => import('./screens/GameScreen'));\nconst AboutScreen = React.lazy(() => import('./screens/AboutScreen'));\n\n// Optimized router with suspense\nconst AppRouter = () => {\n  return (\n    <Router>\n      <Suspense fallback={<LoadingScreen />}>\n        <Routes>\n          <Route path=\"/\" element={<HomeScreen />} />\n          <Route path=\"/game\" element={<ProtectedRoute><GameScreen /></ProtectedRoute>} />\n          <Route path=\"/about\" element={<AboutScreen />} />\n          {/* Other routes */}\n        </Routes>\n      </Suspense>\n    </Router>\n  );\n};\n\n// Memoized components\nconst AlbumCover = React.memo(({ album, onSelect, isSelected }) => {\n  return (\n    <AlbumCoverContainer\n      onClick={() => onSelect(album)}\n      className={isSelected ? 'selected' : ''}\n    >\n      <LazyLoadImage\n        src={album.coverArt}\n        alt={`${album.name} by ${album.artist}`}\n        effect=\"blur\"\n        threshold={100}\n      />\n      <AlbumInfo>\n        <AlbumTitle>{album.name}</AlbumTitle>\n        <AlbumArtist>{album.artist}</AlbumArtist>\n      </AlbumInfo>\n    </AlbumCoverContainer>\n  );\n});\n\n// Optimized track comparison with memoization\nconst useTrackComparison = (playerTrack, computerTrack, category) => {\n  return useMemo(() => {\n    if (!playerTrack || !computerTrack || !category) return null;\n    return compareTracksByCategory(playerTrack, computerTrack, category);\n  }, [playerTrack, computerTrack, category]);\n};\n\n// Debounced event handler\nconst useDebounce = (value, delay) => {\n  const [debouncedValue, setDebouncedValue] = useState(value);\n  \n  useEffect(() => {\n    const handler = setTimeout(() => {\n      setDebouncedValue(value);\n    }, delay);\n    \n    return () => {\n      clearTimeout(handler);\n    };\n  }, [value, delay]);\n  \n  return debouncedValue;\n};\n```\n\nImplement image optimization using responsive images and WebP format where supported.",
+      "testStrategy": "Measure and compare performance metrics before and after optimizations using Lighthouse or similar tools. Test loading times on various network conditions. Verify that animations run at 60fps. Test memory usage during extended gameplay sessions. Ensure optimizations don't introduce new bugs or regressions.",
+      "priority": "medium",
+      "dependencies": [
+        15
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Code Splitting and Lazy Loading",
+          "description": "Set up code splitting and lazy loading for all major components and routes to reduce initial bundle size and improve loading times.",
+          "dependencies": [],
+          "details": "Identify all major components and screens that can be lazy loaded. Implement React.lazy() and Suspense for each route in the router. Create appropriate loading fallbacks for each lazy-loaded component. Update the webpack configuration if needed to optimize chunk sizes.",
+          "status": "pending",
+          "testStrategy": "Measure bundle size before and after implementation. Test loading times on slow network connections. Verify that components load correctly with no errors."
+        },
+        {
+          "id": 2,
+          "title": "Optimize Images with Responsive Loading",
+          "description": "Implement image optimization using responsive images, WebP format, and lazy loading techniques.",
+          "dependencies": [],
+          "details": "Convert existing images to WebP format with fallbacks for unsupported browsers. Implement srcset and sizes attributes for responsive images. Use the LazyLoadImage component for all images. Create different sized versions of images for various viewport sizes. Add blur-up loading effect for better perceived performance.",
+          "status": "pending",
+          "testStrategy": "Compare page load times before and after optimization. Verify images load correctly across different devices and browsers. Test bandwidth usage reduction."
+        },
+        {
+          "id": 3,
+          "title": "Implement Memoization for Expensive Calculations",
+          "description": "Apply useMemo and React.memo to prevent unnecessary recalculations and re-renders throughout the application.",
+          "dependencies": [
+            1
+          ],
+          "details": "Identify components that render frequently but don't need to update. Apply React.memo to these components with appropriate equality checks. Find expensive calculations in the codebase and wrap them with useMemo. Implement custom comparison functions where default shallow comparison is insufficient. Focus on the track comparison logic and other data processing functions.",
+          "status": "pending",
+          "testStrategy": "Profile render counts before and after implementation. Measure CPU usage during interactions. Create unit tests to verify memoized functions return cached results when inputs haven't changed."
+        },
+        {
+          "id": 4,
+          "title": "Implement Event Debouncing and Throttling",
+          "description": "Apply debouncing and throttling techniques to frequent events like scrolling, resizing, and user input to reduce unnecessary processing.",
+          "dependencies": [],
+          "details": "Create reusable useDebounce and useThrottle hooks. Apply debouncing to search inputs, form submissions, and other user inputs. Apply throttling to scroll events, resize handlers, and other continuous events. Ensure proper cleanup of timers in useEffect return functions. Optimize event handlers in list components and scrollable areas.",
+          "status": "pending",
+          "testStrategy": "Test user experience with rapid inputs. Verify that handlers are called the correct number of times. Measure performance impact during rapid interactions."
+        },
+        {
+          "id": 5,
+          "title": "Implement Performance Monitoring and Optimization Verification",
+          "description": "Set up performance monitoring tools and metrics to verify the impact of optimizations and identify remaining bottlenecks.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Integrate React Profiler to identify unnecessary renders. Set up Lighthouse CI for automated performance testing. Implement Web Vitals tracking to monitor Core Web Vitals. Create a performance dashboard to track metrics over time. Add performance budgets to prevent regressions. Identify and fix any remaining bottlenecks discovered during monitoring.",
+          "status": "pending",
+          "testStrategy": "Compare key metrics before and after all optimizations. Test on low-end devices to ensure performance improvements are universal. Verify that all Core Web Vitals meet or exceed recommended thresholds."
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "title": "Implement Error Handling and Fallback UI",
+      "description": "Create a robust error handling system with user-friendly error messages and fallback UI components.",
+      "details": "Implement error handling and fallback UI with the following features:\n\n1. Global error boundary to catch and display errors\n2. Specific error handling for API failures\n3. Fallback UI components when data is unavailable\n4. Retry mechanisms for failed operations\n5. User-friendly error messages\n\n```jsx\nclass ErrorBoundary extends React.Component {\n  constructor(props) {\n    super(props);\n    this.state = { hasError: false, error: null, errorInfo: null };\n  }\n  \n  static getDerivedStateFromError(error) {\n    return { hasError: true };\n  }\n  \n  componentDidCatch(error, errorInfo) {\n    this.setState({ error, errorInfo });\n    // Log error to monitoring service\n    console.error('Error caught by boundary:', error, errorInfo);\n  }\n  \n  render() {\n    if (this.state.hasError) {\n      return (\n        <ErrorContainer>\n          <ErrorTitle>Something went wrong</ErrorTitle>\n          <ErrorMessage>{this.state.error?.message || 'An unexpected error occurred'}</ErrorMessage>\n          <RetryButton onClick={() => window.location.reload()}>\n            Retry\n          </RetryButton>\n          <HomeButton onClick={() => window.location.href = '/'}>\n            Return to Home\n          </HomeButton>\n        </ErrorContainer>\n      );\n    }\n    \n    return this.props.children;\n  }\n}\n\n// API error handler\nconst handleApiError = (error) => {\n  if (error.response) {\n    // Server responded with error\n    switch (error.response.status) {\n      case 401:\n        // Unauthorized - token expired\n        refreshAccessToken().catch(() => {\n          // If refresh fails, redirect to login\n          redirectToLogin();\n        });\n        break;\n      case 429:\n        // Rate limited\n        const retryAfter = error.response.headers['retry-after'] || 30;\n        showNotification(`Rate limited. Please try again in ${retryAfter} seconds.`);\n        break;\n      case 404:\n        // Resource not found\n        showNotification('The requested resource was not found.');\n        break;\n      default:\n        showNotification('An error occurred. Please try again later.');\n    }\n  } else if (error.request) {\n    // No response received\n    if (!navigator.onLine) {\n      showNotification('You appear to be offline. Please check your connection.');\n    } else {\n      showNotification('Unable to reach the server. Please try again later.');\n    }\n  } else {\n    // Error in request setup\n    showNotification('An unexpected error occurred. Please try again.');\n  }\n  \n  // Log error for debugging\n  console.error('API Error:', error);\n};\n\n// Fallback UI for when album data can't be loaded\nconst AlbumFallback = () => (\n  <FallbackContainer>\n    <FallbackAlbumCover />\n    <FallbackText>Album unavailable</FallbackText>\n    <RetryButton onClick={retryLoadAlbum}>Retry</RetryButton>\n  </FallbackContainer>\n);\n```\n\nImplement a notification system to display error messages and other important information to the user.",
+      "testStrategy": "Test error handling with simulated API failures, network errors, and unexpected exceptions. Verify that error boundaries correctly catch and display errors without crashing the application. Test fallback UI components to ensure they provide useful information and options to recover. Ensure error messages are user-friendly and provide clear next steps.",
+      "priority": "medium",
+      "dependencies": [
+        15
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Global Error Boundary Component",
+          "description": "Complete the implementation of the ErrorBoundary component to catch and display errors throughout the application.",
+          "dependencies": [],
+          "details": "Enhance the existing ErrorBoundary component by adding proper styling for ErrorContainer, ErrorTitle, ErrorMessage, RetryButton, and HomeButton components. Implement error logging to a monitoring service instead of just console.error. Add functionality to the retry button to reload only the affected component when possible instead of the entire page. Include options for customization through props.",
+          "status": "pending",
+          "testStrategy": "Write unit tests using Jest and React Testing Library to verify the ErrorBoundary correctly catches errors and renders the fallback UI. Test different error scenarios and verify the retry and home buttons function correctly."
+        },
+        {
+          "id": 2,
+          "title": "Create API Error Handler with Retry Mechanism",
+          "description": "Enhance the API error handler to include retry mechanisms for transient failures and improve error categorization.",
+          "dependencies": [],
+          "details": "Refactor the handleApiError function into a reusable utility that can be imported across the application. Implement an exponential backoff retry mechanism for 5xx errors and network failures. Add more specific error handling for common API error codes. Create a centralized error logging service that sends errors to both the console and a backend monitoring service. Implement proper error translation to user-friendly messages based on error types.",
+          "status": "pending",
+          "testStrategy": "Write unit tests for the API error handler using Jest with mocked API responses. Test different error scenarios (401, 404, 429, 500, network errors) and verify the correct actions are taken."
+        },
+        {
+          "id": 3,
+          "title": "Develop Fallback UI Component Library",
+          "description": "Create a set of reusable fallback UI components for different data types and loading states.",
+          "dependencies": [],
+          "details": "Expand beyond the AlbumFallback to create a library of fallback components including: ListFallback, ProfileFallback, ImageFallback, and DataTableFallback. Each component should have loading, error, and empty states. Implement skeleton loaders for the loading state. Ensure all fallback components have retry functionality and clear error messaging. Make components customizable through props for different visual styles.",
+          "status": "pending",
+          "testStrategy": "Create visual regression tests using Storybook and Jest snapshots to ensure fallback components render correctly in different states. Test the retry functionality using mock functions."
+        },
+        {
+          "id": 4,
+          "title": "Implement Notification System",
+          "description": "Create a comprehensive notification system to display error messages, warnings, and success messages to users.",
+          "dependencies": [
+            2
+          ],
+          "details": "Implement a NotificationProvider using React Context to manage notifications application-wide. Create a Notification component with different visual styles for error, warning, success, and info messages. Add support for different notification positions (top, bottom, left, right). Implement auto-dismissal with configurable timeouts and manual dismissal. Connect the API error handler to automatically display notifications for API errors. Add accessibility features including ARIA attributes and keyboard navigation.",
+          "status": "pending",
+          "testStrategy": "Test the notification system with Jest and React Testing Library, verifying notifications appear correctly, can be dismissed, and automatically disappear after the timeout. Test keyboard accessibility and screen reader compatibility."
+        },
+        {
+          "id": 5,
+          "title": "Integrate Error Handling System Application-Wide",
+          "description": "Connect all error handling components and implement application-wide error monitoring and reporting.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Wrap the main application component with the ErrorBoundary. Integrate the API error handler with all API calls throughout the application. Apply appropriate fallback UI components to all data-dependent views. Connect the notification system to display relevant error messages. Implement a global error tracking service integration (like Sentry) to capture and report errors. Add a user feedback mechanism for error reporting. Create a developer-focused error logging system that captures detailed error information without exposing it to users.",
+          "status": "pending",
+          "testStrategy": "Perform integration testing to verify all error handling components work together correctly. Test error scenarios that trigger multiple parts of the system. Conduct user testing to ensure error messages are understandable and helpful."
+        }
+      ]
+    }
+  ]
+}

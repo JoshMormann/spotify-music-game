@@ -1,0 +1,128 @@
+# Player 2 (Computer) Hand Strategy
+
+## MVP Approach: Static Album Hand
+
+For the MVP version of UMG Track Battle, Player 2 will be controlled by the computer and will use a static set of albums and tracks. This approach provides several advantages:
+
+1. **Predictable Gameplay**: A curated set of albums ensures balanced gameplay
+2. **Reduced Complexity**: No need for dynamic data fetching for the computer player
+3. **Faster Development**: Allows for quicker implementation and testing
+4. **Controlled Challenge Level**: Can be designed with appropriate difficulty
+
+### Static Hand Implementation
+
+The static hand for Player 2 will consist of:
+
+1. **Album Selection**: 12 carefully selected albums from the UMG catalog that:
+   - Represent diverse genres and eras
+   - Include both highly popular and more niche selections
+   - Contain tracks with varied attributes (chart positions, play counts, release dates)
+   - Feature iconic and recognizable album artwork
+
+2. **Data Structure**: Each album in the static hand will have:
+   - Complete metadata (artist, title, release date)
+   - Full track listings with all required attributes
+   - Pre-populated challenge category data (Billboard ranks, play counts, etc.)
+
+3. **Computer AI Strategy**:
+   - Basic algorithm to select tracks based on the current challenge category
+   - Prioritize tracks with strong attributes for the active challenge
+   - Include some randomness to prevent predictable play patterns
+
+### Example Static Hand Albums
+
+The static hand could include iconic UMG albums such as:
+- "Thriller" by Michael Jackson
+- "Rumours" by Fleetwood Mac
+- "Abbey Road" by The Beatles
+- "Back in Black" by AC/DC
+- "Nevermind" by Nirvana
+- "The Dark Side of the Moon" by Pink Floyd
+- "1989" by Taylor Swift
+- "Lemonade" by Beyoncé
+- "To Pimp a Butterfly" by Kendrick Lamar
+- "Purple Rain" by Prince
+- "Appetite for Destruction" by Guns N' Roses
+- "Random Access Memories" by Daft Punk
+
+## Future PvP Expansion
+
+The game architecture will be designed to easily transition from PvC (Player vs Computer) to PvP (Player vs Player) in future updates.
+
+### PvP Implementation Strategy
+
+1. **Matchmaking System**:
+   - Random matchmaking similar to Words with Friends
+   - Option to challenge friends directly
+   - Potential for ranked matchmaking based on skill level
+
+2. **Dynamic Hands for Both Players**:
+   - Both players' hands will be generated from their Spotify listening history
+   - Same album hand logic applies to both players
+   - Ensures unique and personalized gameplay for each match
+
+3. **Asynchronous Gameplay**:
+   - Players can take turns at their convenience
+   - Push notifications when it's the player's turn
+   - Game state persistence between sessions
+
+4. **Social Features**:
+   - Friend system integration
+   - Option to add opponents as Spotify friends
+   - In-game chat functionality
+   - Sharing match results on social media
+
+### Technical Considerations for PvP
+
+1. **Backend Requirements**:
+   - User authentication and session management
+   - Game state storage in database
+   - WebSocket or polling for real-time updates
+   - API endpoints for game actions
+
+2. **Data Privacy**:
+   - Clear consent for sharing listening history in gameplay
+   - Options to limit visibility of listening history
+   - Compliance with relevant data protection regulations
+
+3. **Scalability**:
+   - Architecture that supports concurrent games
+   - Efficient data storage and retrieval
+   - Caching strategies for frequently accessed data
+
+## Transition Path from MVP to PvP
+
+1. **Phase 1 (MVP)**: Player vs Computer with static hand
+   - Focus on core gameplay mechanics
+   - Spotify login and dynamic hand for Player 1 only
+   - Computer opponent with static hand
+
+2. **Phase 2**: Enhanced PvC Experience
+   - Improved computer AI
+   - Expanded static album catalog
+   - Difficulty levels for computer opponent
+
+3. **Phase 3**: Limited PvP Beta
+   - Friend-only PvP matches
+   - Basic matchmaking
+   - Core PvP functionality
+
+4. **Phase 4**: Full PvP Release
+   - Random matchmaking
+   - Leaderboards and rankings
+   - Complete social features
+
+5. **Phase 5**: Advanced Features
+   - Tournaments and events
+   - Seasonal content
+   - Enhanced social features
+
+## Implementation Priorities
+
+For the MVP, the focus should be on:
+1. Solid implementation of the static hand for Player 2
+2. Basic computer AI for track selection
+3. Clear UI distinction between human and computer players
+4. Architecture that supports future PvP expansion
+
+The static hand approach provides a controlled environment for testing and refining the core gameplay mechanics while setting the foundation for future PvP functionality.

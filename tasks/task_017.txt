@@ -1,0 +1,102 @@
+# Task ID: 17
+# Title: Implement Home Screen and Navigation
+# Status: pending
+# Dependencies: 1
+# Priority: medium
+# Description: Create a home screen with game logo, start button, and basic navigation between screens.
+# Details:
+Implement the home screen with the following features:
+
+1. Game logo and title display
+2. Start game button that initiates Spotify authentication
+3. Basic information about the game
+4. Navigation between home, game, and about screens
+
+```jsx
+const HomeScreen = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useSpotifyAuth();
+  
+  const handleStartGame = () => {
+    if (isAuthenticated) {
+      navigate('/game');
+    } else {
+      // Redirect to Spotify login
+      window.location.href = getSpotifyAuthUrl();
+    }
+  };
+  
+  return (
+    <HomeContainer>
+      <LogoContainer>
+        <GameLogo src="/assets/logo.png" alt="UMG Track Battle Logo" />
+        <GameTitle>UMG Track Battle</GameTitle>
+      </LogoContainer>
+      
+      <GameDescription>
+        Test your music knowledge in this card-based music game featuring tracks from Universal Music Group's vast catalog.
+      </GameDescription>
+      
+      <StartButton onClick={handleStartGame}>
+        {isAuthenticated ? 'Start Game' : 'Login with Spotify'}
+      </StartButton>
+      
+      <NavigationLinks>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/how-to-play">How to Play</NavLink>
+      </NavigationLinks>
+    </HomeContainer>
+  );
+};
+
+const AppRouter = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomeScreen />} />
+        <Route path="/game" element={<ProtectedRoute><GameScreen /></ProtectedRoute>} />
+        <Route path="/about" element={<AboutScreen />} />
+        <Route path="/how-to-play" element={<HowToPlayScreen />} />
+        <Route path="/callback" element={<SpotifyCallback />} />
+      </Routes>
+    </Router>
+  );
+};
+```
+
+Implement a `ProtectedRoute` component to ensure only authenticated users can access the game screen.
+
+# Test Strategy:
+Test navigation between all screens. Verify that unauthenticated users are redirected to Spotify login when attempting to start the game. Test the authentication callback handling. Ensure the home screen is visually appealing and responsive across different devices.
+
+# Subtasks:
+## 1. Create HomeScreen UI Components [pending]
+### Dependencies: None
+### Description: Implement the UI components for the home screen including styled containers, logo display, game title, and description.
+### Details:
+Create styled components for HomeContainer, LogoContainer, GameLogo, GameTitle, GameDescription, StartButton, and NavigationLinks. Style these components according to the game's visual identity. Ensure the logo image is properly loaded and displayed. Make the layout responsive for different screen sizes.
+
+## 2. Implement Spotify Authentication Logic [pending]
+### Dependencies: None
+### Description: Create the authentication logic for Spotify integration, including the getSpotifyAuthUrl function and useSpotifyAuth hook.
+### Details:
+Implement the useSpotifyAuth hook to manage authentication state. Create the getSpotifyAuthUrl function to generate the proper OAuth URL for Spotify. Store authentication tokens securely and handle token refresh. Implement logic to check if the user is already authenticated.
+
+## 3. Create ProtectedRoute Component [pending]
+### Dependencies: 17.2
+### Description: Implement a ProtectedRoute component that redirects unauthenticated users to the home screen.
+### Details:
+Create a ProtectedRoute component that wraps route elements requiring authentication. Use the useSpotifyAuth hook to check authentication status. Redirect unauthenticated users to the home page with an appropriate message. Include a loading state while checking authentication.
+
+## 4. Implement Navigation and Routing [pending]
+### Dependencies: 17.3
+### Description: Set up the AppRouter component with all required routes and navigation between screens.
+### Details:
+Implement the AppRouter component with Routes for home, game, about, how-to-play, and callback pages. Ensure the ProtectedRoute component is properly applied to the game route. Create placeholder components for screens that haven't been implemented yet. Set up the SpotifyCallback component to handle the OAuth redirect.
+
+## 5. Connect HomeScreen to Navigation and Auth [pending]
+### Dependencies: 17.1, 17.2, 17.4
+### Description: Finalize the HomeScreen component by connecting it to the navigation system and authentication logic.
+### Details:
+Implement the handleStartGame function to check authentication status and navigate appropriately. Connect the StartButton to this handler. Ensure the button text changes based on authentication status. Implement the NavigationLinks to use the router's navigation. Add any final polish to the home screen UI and interactions.
+

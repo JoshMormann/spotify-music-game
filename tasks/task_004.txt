@@ -1,0 +1,79 @@
+# Task ID: 4
+# Title: Implement Album Hand Generation Logic
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Create the logic to generate the player's hand of 12 albums based on their recently played tracks from Spotify.
+# Details:
+Implement the album hand generation algorithm:
+
+1. Fetch the user's 50 most recently played tracks using the Spotify service
+2. Extract unique albums from these tracks
+3. Select the 12 most recently played unique albums/EPs
+4. If fewer than 12 albums are available, implement fallback logic to select popular UMG albums
+
+```javascript
+const generateAlbumHand = async () => {
+  const recentTracks = await spotifyService.getRecentlyPlayedTracks(50);
+  
+  // Extract unique albums
+  const uniqueAlbums = [];
+  const albumIds = new Set();
+  
+  recentTracks.forEach(item => {
+    const albumId = item.track.album.id;
+    if (!albumIds.has(albumId)) {
+      albumIds.add(albumId);
+      uniqueAlbums.push(item.track.album);
+    }
+  });
+  
+  // Take the first 12 or all if fewer
+  const playerHand = uniqueAlbums.slice(0, 12);
+  
+  // If we have fewer than 12, add fallback albums
+  if (playerHand.length < 12) {
+    const fallbackAlbums = await getFallbackAlbums(12 - playerHand.length);
+    playerHand.push(...fallbackAlbums);
+  }
+  
+  return playerHand;
+};
+```
+
+Ensure the function handles edge cases such as users with limited listening history.
+
+# Test Strategy:
+Test with various mock Spotify listening histories, including edge cases: users with fewer than 12 albums played, users with exactly 12 albums, and users with many albums. Verify fallback logic works correctly when needed. Test that duplicate albums are correctly filtered out.
+
+# Subtasks:
+## 1. Implement Spotify Recently Played Tracks Fetching [pending]
+### Dependencies: None
+### Description: Create a function to fetch the user's 50 most recently played tracks from the Spotify API using the existing spotifyService.
+### Details:
+Implement the spotifyService.getRecentlyPlayedTracks(limit) function that makes an API call to Spotify's recently played endpoint. Ensure proper error handling for API failures, rate limiting, and authentication issues. Return the raw track data from Spotify in a consistent format.
+
+## 2. Implement Unique Album Extraction Logic [pending]
+### Dependencies: None
+### Description: Create a function that extracts unique albums from the list of recently played tracks, preserving the order of first appearance.
+### Details:
+Implement the logic to iterate through the recently played tracks, identify unique albums by their IDs, and create an array of album objects. Use a Set to track which album IDs have already been processed. Ensure the function handles edge cases like tracks with missing album information.
+
+## 3. Implement Fallback Album Selection [pending]
+### Dependencies: None
+### Description: Create a function to fetch popular UMG albums when a user has fewer than 12 unique albums in their recently played history.
+### Details:
+Implement the getFallbackAlbums(count) function that retrieves a specified number of popular or recommended albums. This could use a predefined list, query Spotify's featured or popular albums, or use another data source. Ensure the returned albums have the same data structure as those from the user's history.
+
+## 4. Integrate Album Hand Generation Function [pending]
+### Dependencies: None
+### Description: Combine the unique album extraction and fallback logic into the main generateAlbumHand function to create a complete hand of 12 albums.
+### Details:
+Implement the complete generateAlbumHand function that calls the recently played tracks function, extracts unique albums, slices to get the first 12 (or fewer), and then supplements with fallback albums if needed. Ensure the final array contains exactly 12 album objects with consistent structure.
+
+## 5. Add Edge Case Handling and Performance Optimization [pending]
+### Dependencies: None
+### Description: Enhance the album hand generation with comprehensive error handling, edge cases, and performance optimizations.
+### Details:
+Add handling for scenarios such as API failures, network issues, and users with no listening history. Implement caching for fallback albums to improve performance. Add logging for debugging purposes. Consider adding a timeout mechanism to prevent long-running operations. Ensure all album objects have consistent properties needed by the UI layer.
+

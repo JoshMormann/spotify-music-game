@@ -1,0 +1,114 @@
+# Task ID: 13
+# Title: Implement Simulated Track Playback UI
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Create a visual representation of track playback using turntable animation and album art display.
+# Details:
+Implement the simulated track playback UI with the following features:
+
+1. Animated turntable with spinning record
+2. Album art displayed as label on the vinyl record
+3. Track information display (title, artist, album)
+4. Visual play/pause controls (non-functional for MVP)
+
+```jsx
+const TrackPlaybackUI = ({ track, isPlaying = true }) => {
+  if (!track) return null;
+  
+  return (
+    <PlaybackContainer>
+      <TurntableContainer>
+        <Turntable>
+          <Vinyl 
+            isPlaying={isPlaying}
+            albumCover={track.album.images[0].url}
+          />
+          <ToneArm isPlaying={isPlaying} />
+        </Turntable>
+      </TurntableContainer>
+      
+      <TrackInfoContainer>
+        <TrackTitle>{track.name}</TrackTitle>
+        <TrackArtist>{track.artists[0].name}</TrackArtist>
+        <TrackAlbum>{track.album.name}</TrackAlbum>
+      </TrackInfoContainer>
+      
+      <PlaybackControls>
+        <PlayButton aria-label="Play" />
+        <PauseButton aria-label="Pause" />
+      </PlaybackControls>
+    </PlaybackContainer>
+  );
+};
+
+const ToneArm = styled.div`
+  position: absolute;
+  top: 50px;
+  right: 50px;
+  width: 100px;
+  height: 10px;
+  background-color: #999;
+  transform-origin: right center;
+  transform: ${props => props.isPlaying ? 'rotate(30deg)' : 'rotate(0deg)'};
+  transition: transform 0.5s ease;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #777;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 5px;
+    height: 14px;
+    background-color: #555;
+  }
+`;
+```
+
+Implement smooth transitions between different tracks and ensure the animation runs at a consistent frame rate.
+
+# Test Strategy:
+Test the playback UI with various album art images to ensure proper display. Verify that animations run smoothly across different browsers and devices. Test with and without track data to ensure proper handling of null/undefined values. Ensure the UI is accessible and provides appropriate ARIA attributes.
+
+# Subtasks:
+## 1. Create Vinyl Record Component with Album Art [pending]
+### Dependencies: None
+### Description: Implement the Vinyl component that displays a spinning record with the album art as the label.
+### Details:
+Create a styled component for the vinyl record that accepts album art URL and isPlaying props. Implement CSS animations for the spinning effect that activates when isPlaying is true. Use a circular container with the album art centered in the middle to simulate a vinyl record with label. Add appropriate styling for the vinyl grooves and outer edge.
+
+## 2. Implement ToneArm Component with Animation [pending]
+### Dependencies: None
+### Description: Complete the ToneArm component with proper positioning and animation when playback state changes.
+### Details:
+Refine the existing ToneArm styled component to ensure proper positioning relative to the vinyl record. Implement smooth animation for the tone arm movement when transitioning between playing and paused states. Add additional styling details to make the tone arm look realistic.
+
+## 3. Create Track Information Display [pending]
+### Dependencies: None
+### Description: Implement the TrackInfoContainer component to display track title, artist, and album information.
+### Details:
+Create styled components for TrackInfoContainer, TrackTitle, TrackArtist, and TrackAlbum. Implement responsive layout that displays the track information clearly. Add appropriate typography and spacing. Ensure text truncation for long titles/names with ellipsis.
+
+## 4. Implement Visual Play/Pause Controls [pending]
+### Dependencies: None
+### Description: Create the visual play/pause button components for the playback UI.
+### Details:
+Implement PlayButton and PauseButton styled components with appropriate icons. Style the buttons to match the vintage turntable aesthetic. Add hover and focus states for better user experience. For MVP, these will be visual-only without actual functionality.
+
+## 5. Integrate Components with Smooth Transitions [pending]
+### Dependencies: 13.1, 13.2, 13.3, 13.4
+### Description: Assemble all components into the TrackPlaybackUI and implement smooth transitions between tracks.
+### Details:
+Create the PlaybackContainer and TurntableContainer styled components. Integrate all previously built components (Vinyl, ToneArm, TrackInfo, PlaybackControls). Implement transition effects when track data changes to ensure smooth animation between different tracks. Add logic to handle edge cases like missing album art or track information. Optimize animations to maintain consistent frame rate.
+

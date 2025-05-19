@@ -1,0 +1,109 @@
+# Task ID: 11
+# Title: Implement Computer Player AI Logic
+# Status: pending
+# Dependencies: 6
+# Priority: high
+# Description: Develop the AI logic for the computer opponent to make strategic decisions during gameplay.
+# Details:
+Implement the computer player AI with the following features:
+
+1. Strategic album selection based on overall strength across categories
+2. Track selection logic that evaluates potential success in different categories
+3. Category selection that maximizes win probability
+4. Include some randomness to prevent predictability
+
+```javascript
+const computerTurn = async () => {
+  // Step 1: Select an album (with some randomness)
+  const selectedAlbum = selectComputerAlbum(state.computerAlbums);
+  dispatch({ type: 'SELECT_ALBUM', payload: selectedAlbum });
+  
+  // Simulate thinking time
+  await delay(1000);
+  
+  // Step 2: Select a track
+  const selectedTrack = selectComputerTrack(selectedAlbum);
+  dispatch({ type: 'SELECT_TRACK', payload: selectedTrack });
+  
+  await delay(1000);
+  
+  // Step 3: Select a category
+  const selectedCategory = selectComputerCategory(selectedTrack);
+  dispatch({ type: 'SELECT_CATEGORY', payload: selectedCategory });
+  
+  await delay(1000);
+  
+  // Complete the turn
+  const result = evaluateRound(state.selectedTrack, selectedTrack, selectedCategory);
+  dispatch({
+    type: 'COMPLETE_TURN',
+    payload: {
+      playerScore: result.playerWins ? state.playerScore + 1 : state.playerScore,
+      computerScore: result.computerWins ? state.computerScore + 1 : state.computerScore,
+      turnResult: {
+        playerTrack: state.selectedTrack,
+        computerTrack: selectedTrack,
+        category: selectedCategory,
+        winner: result.winner
+      }
+    }
+  });
+};
+
+const selectComputerAlbum = (albums) => {
+  // 80% chance to pick strategically, 20% chance to pick randomly
+  if (Math.random() < 0.2) {
+    return albums[Math.floor(Math.random() * albums.length)];
+  }
+  
+  // Calculate album strength scores based on track stats
+  const albumScores = albums.map(album => ({
+    album,
+    score: calculateAlbumStrength(album)
+  }));
+  
+  // Sort by score and pick one of the top 3 (with some randomness)
+  albumScores.sort((a, b) => b.score - a.score);
+  const topPick = Math.floor(Math.random() * Math.min(3, albumScores.length));
+  return albumScores[topPick].album;
+};
+
+// Similar functions for track and category selection
+```
+
+Implement helper functions to calculate strength scores for albums and tracks across different categories.
+
+# Test Strategy:
+Create unit tests for each AI decision function. Test with various game states to ensure the AI makes reasonable decisions. Verify that the AI includes appropriate randomness while still making strategic choices. Test edge cases like when only certain categories would result in a win.
+
+# Subtasks:
+## 1. Implement Album Strength Calculation Logic [pending]
+### Dependencies: None
+### Description: Create a function to calculate the overall strength of an album based on its tracks' statistics across all categories.
+### Details:
+Implement the `calculateAlbumStrength` function that takes an album object and returns a numerical score. The function should: 1) Iterate through all tracks in the album, 2) Sum up the category values for each track, 3) Calculate an average or weighted score based on category importance, 4) Return a final numerical strength score. Consider adding a small random factor to prevent ties.
+
+## 2. Implement Computer Album Selection Logic [pending]
+### Dependencies: 11.1
+### Description: Complete the `selectComputerAlbum` function to strategically choose an album with some randomness.
+### Details:
+Enhance the existing `selectComputerAlbum` function to: 1) Use the `calculateAlbumStrength` function to score all available albums, 2) Implement the 80/20 strategy where 80% of the time it picks strategically and 20% randomly, 3) When picking strategically, select from the top 3 albums with some weighted randomness favoring the strongest, 4) Return the selected album object.
+
+## 3. Implement Track Selection Logic [pending]
+### Dependencies: 11.2
+### Description: Create the `selectComputerTrack` function to choose the optimal track from the selected album.
+### Details:
+Implement the `selectComputerTrack` function that: 1) Analyzes all tracks in the selected album, 2) Calculates a strength score for each track based on their category values, 3) Adds some randomness to prevent predictability (e.g., 70% chance to pick one of the top 3 tracks, 30% chance to pick randomly), 4) Returns the selected track object. Consider the current game state (e.g., remaining tracks) in the selection logic.
+
+## 4. Implement Category Selection Logic [pending]
+### Dependencies: 11.3
+### Description: Create the `selectComputerCategory` function to strategically choose the category that maximizes win probability.
+### Details:
+Implement the `selectComputerCategory` function that: 1) Analyzes the selected computer track's stats across all categories, 2) If player track is known, compares the computer track's stats against the player's track to identify the most favorable category, 3) If player track is unknown, selects the category where the computer track has the highest value, 4) Adds a small chance (10-15%) to pick a random category for unpredictability, 5) Returns the selected category string.
+
+## 5. Integrate AI Logic into Game Flow [pending]
+### Dependencies: 11.1, 11.2, 11.3, 11.4
+### Description: Finalize the `computerTurn` function to orchestrate the AI decision-making process with appropriate timing and state updates.
+### Details:
+Complete the `computerTurn` function to: 1) Call the implemented selection functions in sequence with appropriate delays to simulate thinking, 2) Dispatch the correct Redux actions after each decision, 3) Evaluate the round result and update scores, 4) Handle edge cases like when certain albums or tracks are no longer available, 5) Ensure the game state is properly updated after the computer's turn completes.
+

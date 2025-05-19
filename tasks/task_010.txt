@@ -1,0 +1,148 @@
+# Task ID: 10
+# Title: Implement Challenge Category Selection
+# Status: pending
+# Dependencies: 9
+# Priority: medium
+# Description: Create an interface for selecting one of the five challenge categories to compare tracks.
+# Details:
+Implement the challenge category selection interface with the following features:
+
+1. Display all five challenge categories as selectable cards:
+   - Top Chart Rank
+   - Most Plays
+   - Least Plays
+   - Oldest Track
+   - Newest Track
+2. Include visual icons representing each category
+3. Show brief explanation of each category on hover
+4. Implement selection effect
+5. Only enable after track selection
+
+```jsx
+const categories = [
+  {
+    id: 'chart_rank',
+    name: 'Top Chart Rank',
+    description: 'Highest chart position wins (lower number = better rank)',
+    icon: '🏆'
+  },
+  {
+    id: 'most_plays',
+    name: 'Most Plays',
+    description: 'Track with more Spotify plays wins',
+    icon: '🔥'
+  },
+  {
+    id: 'least_plays',
+    name: 'Least Plays',
+    description: 'Track with fewer Spotify plays wins',
+    icon: '💎'
+  },
+  {
+    id: 'oldest',
+    name: 'Oldest Track',
+    description: 'Earlier release date wins',
+    icon: '🕰️'
+  },
+  {
+    id: 'newest',
+    name: 'Newest Track',
+    description: 'Later release date wins',
+    icon: '🆕'
+  }
+];
+
+const CategorySelectionInterface = () => {
+  const { state, dispatch } = useGameContext();
+  const { selectedTrack, selectedCategory, currentTurn } = state;
+  
+  const handleCategorySelect = (category) => {
+    if (currentTurn !== 'player' || !selectedTrack) return;
+    dispatch({ type: 'SELECT_CATEGORY', payload: category });
+  };
+  
+  if (!selectedTrack) return null;
+  
+  return (
+    <div className="category-selection-container">
+      <h3>Select a Challenge Category</h3>
+      <CategoryGrid>
+        {categories.map((category) => (
+          <CategoryCard
+            key={category.id}
+            onClick={() => handleCategorySelect(category)}
+            className={selectedCategory?.id === category.id ? 'selected' : ''}
+          >
+            <CategoryIcon>{category.icon}</CategoryIcon>
+            <CategoryName>{category.name}</CategoryName>
+            <CategoryTooltip>{category.description}</CategoryTooltip>
+          </CategoryCard>
+        ))}
+      </CategoryGrid>
+    </div>
+  );
+};
+```
+
+Style the category cards with skeuomorphic design elements like embossed icons and card-like appearance.
+
+# Test Strategy:
+Test that categories only become selectable after a track is chosen. Verify that selecting a category correctly updates the game state. Test tooltip visibility and content. Ensure the interface is accessible via keyboard navigation and screen readers.
+
+# Subtasks:
+## 1. Create CategoryCard Component [pending]
+### Dependencies: None
+### Description: Implement a reusable CategoryCard component with hover effects and selection styling
+### Details:
+Create a styled component for CategoryCard that includes:
+- Base card styling with skeuomorphic design (shadows, embossing)
+- Hover state that displays the description tooltip
+- Selected state styling with visual indicator
+- Disabled state styling when track is not selected
+- Layout for icon, name, and tooltip positioning
+
+## 2. Implement CategoryGrid Layout [pending]
+### Dependencies: 10.1
+### Description: Create the grid layout container for displaying the category cards
+### Details:
+Implement a responsive grid layout that:
+- Arranges category cards in a visually appealing grid
+- Maintains proper spacing between cards
+- Adjusts layout for different screen sizes
+- Applies consistent styling with the game's design system
+- Includes the section heading
+
+## 3. Connect Category Selection to Game State [pending]
+### Dependencies: 10.1, 10.2
+### Description: Implement the state management logic for category selection
+### Details:
+Integrate with the game context to:
+- Access the current game state (selectedTrack, currentTurn)
+- Implement handleCategorySelect function to dispatch SELECT_CATEGORY action
+- Conditionally enable/disable category selection based on game state
+- Update UI based on selected category
+- Handle edge cases like deselection or invalid selections
+
+## 4. Add Category Icons and Visual Elements [pending]
+### Dependencies: 10.1
+### Description: Implement the visual icons and styling for each category card
+### Details:
+For each category:
+- Add appropriate emoji icons as specified in the categories array
+- Style the CategoryIcon component with embossed/3D effect
+- Ensure icons are properly sized and positioned
+- Implement consistent visual hierarchy between icon and text
+- Add subtle animations for hover/selection states
+
+## 5. Implement Tooltip Functionality [pending]
+### Dependencies: 10.1, 10.4
+### Description: Create the tooltip component to display category descriptions on hover
+### Details:
+Implement tooltip functionality that:
+- Shows category description on hover
+- Positions tooltip appropriately relative to the card
+- Handles edge cases (screen boundaries, mobile touch)
+- Applies appropriate styling and animations for appearing/disappearing
+- Ensures accessibility with proper ARIA attributes
+- Works correctly across different devices
+

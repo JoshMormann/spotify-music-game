@@ -1,0 +1,90 @@
+# Task ID: 2
+# Title: Implement Spotify OAuth Authentication
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Implement Spotify OAuth 2.0 authentication flow to allow users to log in with their Spotify credentials and authorize access to their listening history.
+# Details:
+1. Register the application with Spotify Developer Dashboard
+2. Obtain client ID and set redirect URI
+3. Implement authentication flow:
+   - Create login button that redirects to Spotify authorization URL
+   - Request 'user-read-recently-played' scope
+   - Handle redirect with authorization code
+   - Exchange code for access token
+   - Store tokens securely in localStorage
+   - Implement token refresh mechanism
+
+Code example for authorization URL:
+```javascript
+const authEndpoint = 'https://accounts.spotify.com/authorize';
+const redirectUri = 'http://localhost:3000/callback';
+const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+const scopes = ['user-read-recently-played'];
+
+const loginUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code&show_dialog=true`;
+```
+
+# Test Strategy:
+Test the full authentication flow manually. Verify tokens are correctly stored and refreshed. Create mock tests for authentication service functions. Test error handling for failed authentication attempts and token refresh failures.
+
+# Subtasks:
+## 1. Set up Spotify Developer credentials [pending]
+### Dependencies: None
+### Description: Register the application with Spotify Developer Dashboard and configure environment variables for client credentials
+### Details:
+1. Create a Spotify Developer account if not already done
+2. Register a new application in the Spotify Developer Dashboard
+3. Set the redirect URI to 'http://localhost:3000/callback'
+4. Note the client ID and client secret
+5. Create a .env file in the project root
+6. Add REACT_APP_SPOTIFY_CLIENT_ID and REACT_APP_SPOTIFY_CLIENT_SECRET to the .env file
+7. Update .gitignore to exclude the .env file
+
+## 2. Create login component with Spotify authorization URL [pending]
+### Dependencies: 2.1
+### Description: Implement a login component with a button that redirects users to the Spotify authorization page
+### Details:
+1. Create a new LoginButton component
+2. Implement the authorization URL construction as shown in the example
+3. Create a styled button that links to the authorization URL
+4. Add the 'user-read-recently-played' scope to the authorization request
+5. Include the component in the app's login/home page
+6. Add appropriate error handling for cases where client ID is missing
+
+## 3. Implement callback handler for authorization code [pending]
+### Dependencies: 2.2
+### Description: Create a callback component/route that handles the redirect from Spotify with the authorization code
+### Details:
+1. Create a new CallbackHandler component
+2. Set up a route at '/callback' that renders this component
+3. Extract the authorization code from the URL query parameters
+4. Display a loading state while processing the code
+5. Implement error handling for cases where the user denies permission
+6. After extracting the code, call a function to exchange it for tokens
+7. Redirect to the main application page after successful authentication
+
+## 4. Implement token exchange and storage [pending]
+### Dependencies: 2.3
+### Description: Create a service to exchange the authorization code for access and refresh tokens, and store them securely
+### Details:
+1. Create an AuthService with a method to exchange the code for tokens
+2. Implement a POST request to 'https://accounts.spotify.com/api/token' with appropriate headers and body
+3. Include client ID, client secret, grant type, code, and redirect URI in the request
+4. Parse the response to extract access_token, refresh_token, and expires_in
+5. Store the tokens and expiration time in localStorage
+6. Implement encryption/decryption for token storage if possible
+7. Create methods to retrieve stored tokens
+
+## 5. Implement token refresh mechanism [pending]
+### Dependencies: 2.4
+### Description: Create a mechanism to automatically refresh the access token when it expires
+### Details:
+1. Create a method in AuthService to check if the current token is expired
+2. Implement a refreshToken method that uses the refresh_token to get a new access_token
+3. Send a POST request to 'https://accounts.spotify.com/api/token' with grant_type=refresh_token
+4. Update the stored tokens with the new access_token and expiration time
+5. Create an axios interceptor or similar mechanism to automatically refresh tokens before making API calls
+6. Handle cases where the refresh token is invalid (redirect to login)
+7. Implement a logout function that clears stored tokens
+

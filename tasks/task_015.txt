@@ -1,0 +1,149 @@
+# Task ID: 15
+# Title: Implement Core Gameplay Loop
+# Status: pending
+# Dependencies: 6, 8, 9, 10, 11, 12, 13, 14
+# Priority: high
+# Description: Integrate all components to create the complete turn-based gameplay experience from start to finish.
+# Details:
+Implement the core gameplay loop with the following features:
+
+1. Game initialization with player and computer album hands
+2. Turn-based gameplay alternating between player and computer
+3. Win condition check (first to 10 points)
+4. Game completion and result display
+
+```jsx
+const GameScreen = () => {
+  const { state, dispatch } = useGameContext();
+  const { gameStatus, currentTurn, playerScore, computerScore, winner } = state;
+  
+  // Initialize game on component mount
+  useEffect(() => {
+    const initializeGame = async () => {
+      try {
+        // Get player's albums from Spotify
+        const playerAlbums = await generateAlbumHand();
+        
+        // Get computer's pre-defined album collection
+        const computerAlbums = getComputerAlbums();
+        
+        dispatch({
+          type: 'INITIALIZE_GAME',
+          payload: { playerAlbums, computerAlbums }
+        });
+      } catch (error) {
+        console.error('Failed to initialize game:', error);
+        // Handle error state
+      }
+    };
+    
+    if (gameStatus === 'idle') {
+      initializeGame();
+    }
+  }, [gameStatus, dispatch]);
+  
+  // Handle computer's turn
+  useEffect(() => {
+    if (gameStatus === 'playing' && currentTurn === 'computer') {
+      const performComputerTurn = async () => {
+        await computerTurn();
+        
+        // Check for win condition after computer's turn
+        if (playerScore >= 10 || computerScore >= 10) {
+          dispatch({
+            type: 'END_GAME',
+            payload: { winner: playerScore >= 10 ? 'player' : 'computer' }
+          });
+        }
+      };
+      
+      performComputerTurn();
+    }
+  }, [gameStatus, currentTurn, playerScore, computerScore, dispatch]);
+  
+  // Check for win condition after player's turn
+  useEffect(() => {
+    if (gameStatus === 'playing' && playerScore >= 10) {
+      dispatch({
+        type: 'END_GAME',
+        payload: { winner: 'player' }
+      });
+    } else if (gameStatus === 'playing' && computerScore >= 10) {
+      dispatch({
+        type: 'END_GAME',
+        payload: { winner: 'computer' }
+      });
+    }
+  }, [gameStatus, playerScore, computerScore, dispatch]);
+  
+  if (gameStatus === 'idle') {
+    return <LoadingScreen message="Preparing your album collection..." />;
+  }
+  
+  if (gameStatus === 'completed') {
+    return <GameOverScreen winner={winner} />;
+  }
+  
+  return (
+    <GameContainer>
+      <GameBoard>
+        <PlayerSection>
+          <AlbumSelectionInterface />
+          <TrackSelectionInterface />
+          <CategorySelectionInterface />
+        </PlayerSection>
+        
+        <GameplaySection>
+          <TrackPlaybackUI track={state.selectedTrack} />
+          <GameFeedback />
+        </GameplaySection>
+        
+        <ComputerSection>
+          {/* Display computer's current selection if any */}
+        </ComputerSection>
+      </GameBoard>
+      
+      <GameControls>
+        <Button onClick={() => handlePlayTurn()}>Play Turn</Button>
+      </GameControls>
+    </GameContainer>
+  );
+};
+```
+
+Implement the `handlePlayTurn` function to process the player's selections and update the game state accordingly.
+
+# Test Strategy:
+Test the complete gameplay loop from start to finish. Verify that turns alternate correctly between player and computer. Test win conditions to ensure the game ends appropriately when a player reaches 10 points. Test edge cases like ties and ensure the game handles them correctly. Conduct end-to-end testing of the full game experience.
+
+# Subtasks:
+## 1. Implement Game Initialization Logic [pending]
+### Dependencies: None
+### Description: Create the initialization logic that sets up the game state with player and computer album hands.
+### Details:
+Complete the `initializeGame` function to properly fetch player albums from Spotify API and set up computer albums. Ensure proper error handling and loading states. Update the game context with initial album collections, set game status to 'playing', and initialize scores to 0.
+
+## 2. Implement Player Turn Logic in handlePlayTurn [pending]
+### Dependencies: 15.1
+### Description: Create the handlePlayTurn function that processes player selections and updates the game state.
+### Details:
+Implement the handlePlayTurn function to: 1) Validate that player has selected an album, track, and category, 2) Compare the selected track's attribute against computer's selection, 3) Determine the winner of the turn based on category comparison, 4) Update scores accordingly, 5) Switch turn to computer, and 6) Update the game state with the results of the turn.
+
+## 3. Implement Computer Turn Logic [pending]
+### Dependencies: 15.2
+### Description: Complete the computerTurn function to handle the computer's decision-making and turn execution.
+### Details:
+Implement the computerTurn function to: 1) Select an album from computer's collection using a strategy (random or weighted), 2) Choose a track from the selected album, 3) Select a category that maximizes winning chance based on track attributes, 4) Compare against player's last selection or make a standalone choice, 5) Update scores based on comparison, and 6) Switch turn back to player. Add a delay to simulate computer thinking.
+
+## 4. Implement Win Condition Checking [pending]
+### Dependencies: 15.2, 15.3
+### Description: Refactor win condition checking into a separate function and ensure it's called at appropriate times.
+### Details:
+Create a checkWinCondition function that: 1) Evaluates if either player or computer has reached 10 points, 2) Determines the winner if win condition is met, 3) Updates game status to 'completed' when appropriate, and 4) Sets the winner in the game state. Call this function after both player and computer turns to ensure consistent checking.
+
+## 5. Implement Game Over Screen and Restart Functionality [pending]
+### Dependencies: 15.4
+### Description: Complete the GameOverScreen component and add ability to restart the game.
+### Details:
+Implement the GameOverScreen component to: 1) Display the winner with appropriate messaging, 2) Show final scores, 3) Highlight best plays from the game, 4) Provide a 'Play Again' button that resets the game state to idle, and 5) Optionally save game statistics. Add a resetGame action to the game reducer that returns the state to initial values while preserving any user preferences.
+

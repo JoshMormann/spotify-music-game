@@ -1,0 +1,69 @@
+# Task ID: 3
+# Title: Create Spotify API Service
+# Status: pending
+# Dependencies: 2
+# Priority: high
+# Description: Develop a service layer to handle all interactions with the Spotify Web API, including fetching user's recently played tracks and album information.
+# Details:
+Create a Spotify service module with the following functions:
+
+1. `getRecentlyPlayedTracks(limit = 50)` - Fetch user's recently played tracks
+2. `getAlbumDetails(albumId)` - Fetch detailed information about an album
+3. `getTrackDetails(trackId)` - Fetch detailed information about a track
+
+Implement proper error handling and rate limiting awareness:
+```javascript
+const getRecentlyPlayedTracks = async (limit = 50) => {
+  try {
+    const response = await axios.get(
+      `https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`
+        }
+      }
+    );
+    return response.data.items;
+  } catch (error) {
+    handleApiError(error);
+    throw error;
+  }
+};
+```
+
+Implement caching strategy to minimize redundant API calls and handle offline scenarios.
+
+# Test Strategy:
+Create unit tests for each API function using Jest and mock responses. Test error handling with simulated API failures. Verify caching mechanism works correctly by checking that repeated calls with the same parameters don't trigger new API requests.
+
+# Subtasks:
+## 1. Set up Spotify API authentication module [pending]
+### Dependencies: None
+### Description: Create a module to handle Spotify API authentication, including token retrieval, storage, and refresh mechanisms.
+### Details:
+Implement functions for getAccessToken(), refreshToken(), and handleTokenExpiration(). Store tokens securely in localStorage with encryption. Include a mechanism to check token validity before making API calls and automatically refresh when needed. Export a getAuthHeader() utility function that other modules can use.
+
+## 2. Implement API error handling and rate limiting [pending]
+### Dependencies: 3.1
+### Description: Create a robust error handling system for Spotify API responses, including rate limit detection and retry logic.
+### Details:
+Implement handleApiError() function that categorizes errors (network, authentication, rate limiting, etc.). For rate limiting (429 errors), add exponential backoff retry logic. Create a request queue system to prevent exceeding Spotify's rate limits. Add logging for API errors to help with debugging.
+
+## 3. Develop caching layer for API responses [pending]
+### Dependencies: 3.2
+### Description: Implement a caching strategy to store API responses locally and reduce redundant API calls.
+### Details:
+Create a cache module with get/set methods that stores responses in localStorage with TTL (time-to-live) values appropriate for each endpoint. Implement cache invalidation logic. Add offline detection to serve cached data when network is unavailable. Use a cache key strategy that includes query parameters.
+
+## 4. Implement core Spotify API service functions [pending]
+### Dependencies: 3.1, 3.2, 3.3
+### Description: Create the main service functions for fetching recently played tracks, album details, and track details.
+### Details:
+Implement getRecentlyPlayedTracks(limit), getAlbumDetails(albumId), and getTrackDetails(trackId) functions using axios. Each function should use the authentication module, apply caching, and handle errors appropriately. Format the response data to match the application's needs and filter out unnecessary fields to keep the cache size manageable.
+
+## 5. Add data transformation and normalization utilities [pending]
+### Dependencies: 3.4
+### Description: Create utility functions to transform and normalize Spotify API responses for consistent use throughout the application.
+### Details:
+Implement functions to normalize track objects, album objects, and artist objects into consistent formats. Add utilities for extracting key information like album artwork in different sizes, track duration in readable format, etc. Create helper methods for common operations like finding the highest quality image from Spotify's images array.
+
