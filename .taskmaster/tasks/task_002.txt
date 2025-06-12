@@ -1,0 +1,34 @@
+# Task ID: 2
+# Title: Implement Spotify OAuth Authentication
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Create authentication flow using Spotify OAuth 2.0 to allow users to log in with their Spotify credentials and access their music library.
+# Details:
+Create an authentication service with the following features:
+
+1. Implement Spotify OAuth 2.0 flow:
+   - Create login button on home screen
+   - Redirect to Spotify authorization page
+   - Handle callback with authorization code
+   - Exchange code for access and refresh tokens
+   - Store tokens securely in local storage
+
+2. Request appropriate scopes:
+   - user-read-recently-played
+   - user-library-read
+
+3. Implement token refresh mechanism:
+   - Check token expiration before API calls
+   - Use refresh token to get new access token
+   - Update stored tokens
+
+4. Create authentication state management:
+   - Track login status
+   - Provide user context to app
+   - Handle logout functionality
+
+Implement persistent login across sessions by checking for valid tokens on app startup.
+
+# Test Strategy:
+Test authentication flow with valid and invalid credentials. Verify token storage and retrieval. Test token refresh mechanism. Ensure login state persists between sessions. Verify proper error handling for authentication failures.

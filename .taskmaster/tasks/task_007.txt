@@ -1,0 +1,48 @@
+# Task ID: 7
+# Title: Create Prompt System and Data
+# Status: pending
+# Dependencies: 5
+# Priority: medium
+# Description: Implement a system for managing and presenting fun, data-driven prompts based on song-level Spotify data.
+# Details:
+Implement prompt system with the following features:
+
+1. Prompt data structure:
+```typescript
+interface Prompt {
+  id: string;
+  text: string;
+  description: string;
+  comparisonType: 'popularity' | 'release_date' | 'duration' | 'title_length' | 'explicit' | 'featured_artists';
+  comparisonDirection: 'highest' | 'lowest';
+}
+```
+
+2. Create prompt database with the following examples:
+   - "Who's got the deepest cut?" (least popular track)
+   - "Who's got the chart-topper?" (most popular track)
+   - "Who's got the golden oldie?" (oldest track)
+   - "Who's got the epic anthem?" (longest track)
+   - "Who's got the quick hit?" (shortest track)
+   - "Who's got the tongue-twister?" (longest title)
+   - "Who's got the one-word wonder?" (shortest title)
+   - "Who's got the explicit banger?" (explicit track)
+   - "Who's got the debut single?" (earliest release by artist)
+   - "Who's got the all-star collab?" (most featured artists)
+
+3. Implement prompt selection logic:
+   - Random selection from available prompts
+   - Avoid repeating prompts in same game
+   - Weight selection based on available track data
+
+4. Create prompt display component:
+   - Show prompt text prominently
+   - Include brief explanation of what makes a winning track
+   - Visual styling to emphasize prompt
+
+5. Implement prompt result explanation:
+   - Generate explanation text based on comparison result
+   - Show relevant data points that determined the winner
+
+# Test Strategy:
+Verify all prompts have correct comparison types and directions. Test prompt selection logic ensures variety. Test explanation generation for different prompt types. Verify prompts are displayed correctly in UI. Test with various track data to ensure all prompts can be properly evaluated.

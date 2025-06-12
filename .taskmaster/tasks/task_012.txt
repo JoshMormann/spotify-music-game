@@ -1,0 +1,75 @@
+# Task ID: 12
+# Title: Implement Track Playback Functionality
+# Status: pending
+# Dependencies: 3, 6
+# Priority: medium
+# Description: Create functionality to play (or simulate playing) the winning track after each round.
+# Details:
+Implement track playback with the following features:
+
+1. Audio playback service:
+```typescript
+class AudioService {
+  private audio: HTMLAudioElement;
+  private currentTrack: Track | null = null;
+  
+  constructor() {
+    this.audio = new Audio();
+    this.setupEventListeners();
+  }
+  
+  playTrack(track: Track) {
+    if (track.preview_url) {
+      this.audio.src = track.preview_url;
+      this.audio.play();
+      this.currentTrack = track;
+    } else {
+      // Fallback for tracks without preview URLs
+      this.simulatePlayback(track);
+    }
+  }
+  
+  stopPlayback() {
+    this.audio.pause();
+    this.audio.currentTime = 0;
+    this.currentTrack = null;
+  }
+  
+  simulatePlayback(track: Track) {
+    // Visual simulation when audio not available
+    console.log(`Simulating playback for: ${track.name}`);
+    // Trigger visual indicators without actual audio
+  }
+  
+  private setupEventListeners() {
+    this.audio.addEventListener('ended', () => {
+      this.currentTrack = null;
+      // Trigger UI update for playback ended
+    });
+  }
+}
+```
+
+2. Playback UI components:
+   - Now playing indicator with track info
+   - Progress bar for current playback
+   - Play/pause controls
+   - Volume control
+
+3. Playback triggers:
+   - Automatically play winning track after round resolution
+   - Option to replay winning track
+   - Option to skip playback
+
+4. Fallback mechanisms:
+   - Handle tracks without preview URLs
+   - Visual simulation when audio not available
+   - Clear error messaging for playback issues
+
+5. Playback transitions:
+   - Fade out current track before playing new track
+   - Smooth transition between tracks
+   - Visual indication of track change
+
+# Test Strategy:
+Test playback with various track preview URLs. Verify fallback mechanism works for tracks without previews. Test playback controls (play, pause, volume). Verify transitions between tracks are smooth. Test error handling for unavailable tracks or network issues. Verify playback state is correctly reflected in UI.

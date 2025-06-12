@@ -3,11 +3,13 @@ import { useAuth } from '../contexts/AuthContext';
 import LoginButton from '../components/common/LoginButton';
 import SpotifyService from '../services/spotify/SpotifyService';
 import { getBestImage, formatDuration } from '../utils/spotifyNormalize';
+import { useNavigate } from 'react-router-dom';
 
 const redirectUri = 'https://127.0.0.1:5173/callback';
 
 const Home = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, logout, login } = useAuth();
+  const navigate = useNavigate();
   const [recentTracks, setRecentTracks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -15,6 +17,24 @@ const Home = () => {
   const [albumLoading, setAlbumLoading] = useState(false);
   const [albumError, setAlbumError] = useState(null);
   const [testError, setTestError] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && !user) {
+      setProfileLoading(true);
+      const service = new SpotifyService(localStorage.getItem('spotify_access_token'));
+      service.getMe(redirectUri)
+        .then(profile => {
+          login({
+            accessToken: localStorage.getItem('spotify_access_token'),
+            refreshToken: localStorage.getItem('spotify_refresh_token'),
+            user: { name: profile.display_name || profile.id },
+          });
+          setProfileLoading(false);
+        })
+        .catch(() => setProfileLoading(false));
+    }
+  }, [isAuthenticated, user, login]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -63,7 +83,32 @@ const Home = () => {
       {!isAuthenticated && <LoginButton />}
       {isAuthenticated && (
         <div style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ccc', borderRadius: 8 }}>
-          <strong>Logged in as:</strong> {user?.name || 'Spotify User'}
+          <strong>Logged in as:</strong> {profileLoading ? 'Loading...' : (user?.name || 'Spotify User')}
+          <button onClick={logout} style={{ marginLeft: 16, background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 4, padding: '0.3rem 0.8rem', cursor: 'pointer' }}>
+            Log Out
+          </button>
+        </div>
+      )}
+      {isAuthenticated && (
+        <div style={{ marginTop: '2rem', marginBottom: '2rem', textAlign: 'center' }}>
+          <button
+            onClick={() => navigate('/game')}
+            style={{
+              background: '#1DB954',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 8,
+              padding: '1rem 2.5rem',
+              fontSize: 20,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+              letterSpacing: 1,
+              transition: 'background 0.2s',
+            }}
+          >
+            Start Game
+          </button>
         </div>
       )}
       {isAuthenticated && (

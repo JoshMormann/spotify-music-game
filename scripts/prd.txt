@@ -1,315 +1,210 @@
 # Product Requirements Document (PRD)
-# UMG Track Battle
+## UMG Track Battle
 
-## Document Information
+### Document Information
 - **Document Title:** UMG Track Battle - Product Requirements Document
-- **Version:** 1.0
-- **Date:** May 19, 2025
+- **Version:** 2.0 (Draft)
+- **Date:** June 10, 2024
 - **Status:** Draft
+
+---
 
 ## Executive Summary
 
-UMG Track Battle is a card-based music game that leverages Universal Music Group's vast catalog to create an engaging, educational, and entertaining experience for players. The game combines elements of trivia, strategy, and music discovery in a visually appealing skeuomorphic interface.
+UMG Track Battle is a fast-paced, social music game that leverages Universal Music Group's catalog and Spotify integration. Players compete in rounds by selecting tracks from their own Spotify libraries in response to fun, objective prompts (e.g., "Who's got the deepest cut?"). Each round, the winner is determined by comparing song data—no voting, no subjective scoring, just music and friendly competition. The game is designed for quick, engaging play and music discovery.
 
-This PRD outlines the requirements for the Minimum Viable Product (MVP) version of UMG Track Battle, which will feature Spotify integration to create personalized gameplay using the player's listening history. The MVP will focus on a Player vs Computer (PvC) experience, with a clear path to Player vs Player (PvP) functionality in future releases.
+---
 
 ## Product Vision
 
 UMG Track Battle aims to:
-- Introduce players to music from Universal Music Group's vast library
-- Test players' cultural knowledge of music through engaging gameplay
-- Create a personalized experience by incorporating players' own listening habits
-- Drive discovery of new music within the UMG catalog
-- Increase engagement with the Spotify platform
+- Encourage music discovery and sharing through playful, data-driven challenges.
+- Create a personalized experience by incorporating each player's Spotify library.
+- Foster friendly competition using clear, objective rules.
+- Make music the centerpiece of the game, with winning tracks played after each round.
+
+---
 
 ## Target Audience
 
-- Music enthusiasts aged 16-45
+- Music enthusiasts aged 16–45
 - Spotify users with active listening habits
-- Casual gamers who enjoy trivia and card-based games
+- Casual gamers who enjoy quick, social games
 - Fans of UMG artists looking for interactive experiences
+
+---
 
 ## MVP Requirements
 
 ### 1. User Authentication & Personalization
 
 #### 1.1 Spotify Authentication
-- **Requirement:** Implement Spotify OAuth 2.0 authentication
-- **Description:** Allow users to log in with their Spotify credentials to access their listening history
-- **User Story:** As a player, I want to log in with my Spotify account so that my game experience is personalized based on my listening history
+- **Requirement:** Implement Spotify OAuth 2.0 authentication.
+- **Description:** Allow users to log in with their Spotify credentials to access their music library.
+- **User Story:** As a player, I want to log in with my Spotify account so my game experience is personalized.
 - **Acceptance Criteria:**
-  - User can initiate Spotify login from the game's home screen
-  - App requests appropriate permissions (user-read-recently-played scope)
-  - Authentication tokens are securely stored
-  - Login state persists between sessions
+  - User can initiate Spotify login from the home screen.
+  - App requests appropriate permissions (user-read-recently-played, user-library-read).
+  - Authentication tokens are securely stored.
+  - Login state persists between sessions.
 
-#### 1.2 Dynamic Album Hand Generation
-- **Requirement:** Generate player's hand from recently played albums
-- **Description:** Create a collection of 12 albums based on the user's most recently played tracks on Spotify
-- **User Story:** As a player, I want my game hand to consist of albums I've recently listened to so that I can play with music I'm familiar with
+#### 1.2 Dynamic Hand Generation
+- **Requirement:** Generate each player's hand from their Spotify library.
+- **Description:** Create a collection of 12 tracks (or albums) based on the user's recent listening or saved tracks.
+- **User Story:** As a player, I want my hand to consist of tracks I know and like.
 - **Acceptance Criteria:**
-  - System fetches user's 50 most recently played tracks
-  - System identifies and selects the 12 most recently played unique albums/EPs
-  - Albums with partial plays (only some tracks played) are included
-  - If fewer than 12 albums are available, system provides appropriate fallback options
-  - Album hand is refreshed at the start of each new game
+  - System fetches user's recently played or saved tracks.
+  - System selects 12 unique tracks for the player's hand.
+  - If fewer than 12 tracks are available, system provides appropriate fallback options.
+  - Hand is refreshed at the start of each new game.
+
+---
 
 ### 2. Game Mechanics
 
 #### 2.1 Core Gameplay Loop
-- **Requirement:** Implement turn-based gameplay with challenge categories
-- **Description:** Players take turns selecting tracks and challenge categories, with points awarded based on comparison outcomes
-- **User Story:** As a player, I want to select tracks and challenge categories to compete against the computer
+- **Requirement:** Implement a round-based, prompt-driven gameplay loop.
+- **Description:** Each round, players respond to a fun, objective prompt by selecting a track from their hand. The winner is determined by comparing the relevant song data.
+- **User Story:** As a player, I want to compete in quick rounds with clear, objective outcomes.
 - **Acceptance Criteria:**
-  - Player can select an album from their collection
-  - Player can select a track from the chosen album
-  - Player can select a challenge category
-  - System compares tracks based on the selected category
-  - Points are awarded to the winner of each comparison
-  - First player to reach 10 points wins the game
+  - Game presents a prompt (e.g., "Who's got the deepest cut?").
+  - Each player selects a track from their hand.
+  - The system compares the selected tracks using the relevant Spotify data.
+  - The player whose track best fits the prompt wins the round and earns a point.
+  - The winning track is played for all players.
+  - In case of a tie, the round is replayed with a new prompt.
+  - First player to reach 10 points wins the game.
 
-#### 2.2 Challenge Categories
-- **Requirement:** Implement five distinct challenge categories
-- **Description:** Each category provides a different way to compare tracks
-- **User Story:** As a player, I want multiple challenge categories so I can employ different strategies
+#### 2.2 Fun, Data-Driven Prompts
+- **Requirement:** Use playful, objective prompts based on song-level Spotify data.
+- **Description:** Prompts are worded in a fun, positive way and always resolved by comparing objective data.
+- **User Story:** As a player, I want prompts that are easy to understand, fun, and always have a clear winner.
 - **Acceptance Criteria:**
-  - Top Chart Rank: Highest chart position wins (lower number = better rank)
-  - Most Plays: Track with more Spotify plays wins
-  - Least Plays: Track with fewer Spotify plays wins
-  - Oldest Track: Earlier release date wins
-  - Newest Track: Later release date wins
-  - System clearly explains the outcome of each comparison
+  - Prompts are based on objective, empirical data (e.g., popularity, release year, duration, title length, explicit flag, number of featured artists).
+  - Prompts are worded in a playful, positive way.
+  - Example Prompts:
+    - Who's got the deepest cut? (least popular track)
+    - Who's got the chart-topper? (most popular track)
+    - Who's got the golden oldie? (oldest track)
+    - Who's got the epic anthem? (longest track)
+    - Who's got the quick hit? (shortest track)
+    - Who's got the tongue-twister? (longest title)
+    - Who's got the one-word wonder? (shortest title)
+    - Who's got the explicit banger? (explicit track)
+    - Who's got the debut single? (earliest release by artist)
+    - Who's got the all-star collab? (most featured artists)
+  - The winner is always determined by comparing the relevant data for the selected tracks. In case of a tie, the round is replayed.
 
-#### 2.3 Computer Opponent
-- **Requirement:** Implement AI for computer player
-- **Description:** Computer player makes strategic decisions based on the current game state
-- **User Story:** As a player, I want to play against a computer opponent that provides an engaging challenge
+#### 2.3 Computer Opponent (PvC)
+- **Requirement:** Implement a simple computer opponent for solo play.
+- **Description:** The computer selects tracks from a static or randomly generated hand.
+- **User Story:** As a player, I want to play against the computer when no other players are available.
 - **Acceptance Criteria:**
-  - Computer selects albums, tracks, and challenge categories based on strategic logic
-  - Computer has a static hand of 12 pre-selected UMG albums
-  - Computer's decision-making includes some randomness to prevent predictability
-  - Computer's play style provides appropriate challenge for casual players
+  - Computer has a hand of 12 tracks.
+  - Computer selects tracks based on the prompt (random or basic logic).
+  - Computer's hand is visible or hidden, as per game design.
+
+---
 
 ### 3. User Interface
 
-#### 3.1 Skeuomorphic Design
-- **Requirement:** Implement visually appealing skeuomorphic interface
-- **Description:** Game interface resembles physical objects like album covers, turntables, and wooden surfaces
-- **User Story:** As a player, I want an immersive, visually appealing interface that enhances the music experience
+#### 3.1 Visual Design
+- **Requirement:** Implement a visually appealing, music-themed interface.
+- **Description:** The interface should be fun, clear, and focused on music discovery.
+- **User Story:** As a player, I want an immersive, visually appealing interface that enhances the music experience.
 - **Acceptance Criteria:**
-  - Interface includes realistic album shelf for album selection
-  - Virtual turntable displays currently playing track
-  - Album art appears as label on spinning vinyl record during playback
-  - Interface uses textures and lighting to create depth and realism
-  - Design is responsive and works on various screen sizes
+  - Hand of tracks is displayed with cover art and key info.
+  - Prompts are clearly presented each round.
+  - Selected tracks are highlighted and compared.
+  - Winning track is visually celebrated and played.
+  - Score is prominently displayed and updated in real-time.
+  - Design is responsive and works on various screen sizes.
 
-#### 3.2 Album and Track Selection
-- **Requirement:** Intuitive interfaces for browsing and selecting albums and tracks
-- **Description:** Players can easily navigate their album collection and select tracks
-- **User Story:** As a player, I want to easily browse my album collection and select tracks
+#### 3.2 Track Selection
+- **Requirement:** Intuitive interface for browsing and selecting tracks.
+- **Description:** Players can easily navigate their hand and select tracks.
+- **User Story:** As a player, I want to easily browse my hand and select tracks.
 - **Acceptance Criteria:**
-  - Albums are displayed with cover art in a scrollable interface
-  - Selecting an album reveals its tracks
-  - Track listing includes basic information (title, duration)
-  - Selected album is visually highlighted
-  - Interface clearly distinguishes between player's and computer's collections
+  - Tracks are displayed with cover art in a scrollable interface.
+  - Selecting a track is simple and clear.
+  - Selected track is visually highlighted.
 
 #### 3.3 Game Feedback
-- **Requirement:** Clear visual and textual feedback on game actions and outcomes
-- **Description:** System provides informative feedback on all game events
-- **User Story:** As a player, I want clear feedback on game actions and outcomes so I understand what's happening
+- **Requirement:** Clear feedback on game actions and outcomes.
+- **Description:** System provides informative feedback on all game events.
+- **User Story:** As a player, I want clear feedback so I understand what's happening.
 - **Acceptance Criteria:**
-  - System displays detailed explanation of comparison outcomes
-  - Score is prominently displayed and updated in real-time
-  - Current player turn is clearly indicated
-  - Visual and audio cues reinforce important game events
-  - Game history shows previous plays and outcomes
+  - System displays explanation of comparison outcomes.
+  - Current player turn is clearly indicated.
+  - Visual and audio cues reinforce important game events.
+  - Game history shows previous plays and outcomes.
+
+---
 
 ### 4. Audio Features
 
-#### 4.1 Simulated Track Playback
-- **Requirement:** Simulate playback of selected tracks
-- **Description:** For the MVP, the system will simulate track playback rather than streaming actual audio
-- **User Story:** As a player, I want to see which track is currently "playing" in the game
+#### 4.1 Track Playback
+- **Requirement:** Play the winning track after each round.
+- **Description:** The system plays (or simulates playing) the winning track for all players.
+- **User Story:** As a player, I want to hear the winning track after each round.
 - **Acceptance Criteria:**
-  - Visual indication of currently playing track
-  - Turntable animation shows spinning record with album art
-  - System indicates track title and artist
-  - Interface includes play/pause controls (visual only for MVP)
-  - Smooth transitions between tracks
+  - Winning track is played or simulated.
+  - Visual indication of currently playing track.
+  - Smooth transitions between tracks.
+
+---
 
 ### 5. Technical Requirements
 
 #### 5.1 Spotify API Integration
-- **Requirement:** Integrate with Spotify Web API
-- **Description:** System must connect to Spotify's API to fetch user data and track information
-- **User Story:** As a developer, I need reliable access to Spotify data to create the player's experience
+- **Requirement:** Integrate with Spotify Web API.
+- **Description:** System must connect to Spotify's API to fetch user data and track information.
+- **User Story:** As a developer, I need reliable access to Spotify data to create the player's experience.
 - **Acceptance Criteria:**
-  - Proper implementation of OAuth 2.0 authentication flow
-  - Efficient handling of API rate limits
-  - Appropriate error handling for API failures
-  - Caching strategy to minimize redundant API calls
-  - Compliance with Spotify API terms of service
+  - Proper implementation of OAuth 2.0 authentication flow.
+  - Efficient handling of API rate limits.
+  - Appropriate error handling for API failures.
+  - Caching strategy to minimize redundant API calls.
+  - Compliance with Spotify API terms of service.
 
 #### 5.2 Data Management
-- **Requirement:** Efficient storage and retrieval of game data
-- **Description:** System must manage various data types including user data, album/track information, and game state
-- **User Story:** As a player, I expect the game to load quickly and maintain my progress
+- **Requirement:** Efficient storage and retrieval of game data.
+- **Description:** System must manage user data, track information, and game state.
+- **User Story:** As a player, I expect the game to load quickly and maintain my progress.
 - **Acceptance Criteria:**
-  - Local storage of authentication tokens
-  - Caching of album and track data
-  - Efficient state management for game progress
-  - Data persistence between sessions
-  - Appropriate handling of offline scenarios
+  - Local storage of authentication tokens.
+  - Caching of track data.
+  - Efficient state management for game progress.
+  - Data persistence between sessions.
+  - Appropriate handling of offline scenarios.
 
 #### 5.3 Performance
-- **Requirement:** Responsive and performant application
-- **Description:** Game must run smoothly on target platforms with minimal loading times
-- **User Story:** As a player, I want a smooth, responsive gaming experience without long waits
+- **Requirement:** Responsive and performant application.
+- **Description:** Game must run smoothly on target platforms with minimal loading times.
+- **User Story:** As a player, I want a smooth, responsive gaming experience without long waits.
 - **Acceptance Criteria:**
-  - Initial load time under 5 seconds on average connections
-  - Smooth animations and transitions (60fps target)
-  - Efficient image loading and caching
-  - Optimized API calls to minimize latency
-  - Graceful degradation on slower connections
+  - Initial load time under 5 seconds on average connections.
+  - Smooth animations and transitions (60fps target).
+  - Efficient image loading and caching.
+  - Optimized API calls to minimize latency.
+  - Graceful degradation on slower connections.
+
+---
 
 ## Future Expansion (Post-MVP)
 
 ### 1. Player vs Player (PvP)
-
-#### 1.1 Matchmaking
-- Random matchmaking similar to Words with Friends
-- Friend challenges
-- Potential for ranked matchmaking
-
-#### 1.2 Asynchronous Gameplay
-- Turn-based gameplay that doesn't require both players to be online simultaneously
-- Push notifications for turn alerts
-- Game state persistence between sessions
-
-#### 1.3 Social Features
-- Friend system
-- In-game chat
-- Option to add opponents as Spotify friends
-- Sharing match results on social media
+- Add real-time or asynchronous multiplayer.
+- Friend challenges and matchmaking.
+- Social features (chat, sharing, etc.).
 
 ### 2. Enhanced Audio Features
+- Stream actual track previews from Spotify during gameplay.
+- Seamless transitions between tracks.
 
-#### 2.1 Actual Track Streaming
-- Stream actual track previews from Spotify during gameplay
-- Seamless transitions between tracks
-- Volume controls and audio settings
+### 3. Custom Prompts & Community Features
+- Allow users to submit and vote on new prompts.
+- Seasonal or themed prompt packs.
 
-#### 2.2 Music Discovery Features
-- Recommendations based on gameplay
-- "Add to Spotify playlist" functionality
-- Artist and album information
-
-### 3. Expanded Game Modes
-
-#### 3.1 Tournaments
-- Bracketed competitions
-- Time-limited events
-- Prizes and rewards
-
-#### 3.2 Themed Challenges
-- Genre-specific gameplay
-- Era-based challenges
-- Artist spotlight events
-
-## Technical Architecture
-
-### 1. Frontend
-- React for UI components
-- Context API for state management
-- Responsive design for cross-device compatibility
-
-### 2. Backend (Future PvP)
-- Node.js server for API endpoints
-- MongoDB for data storage
-- WebSockets for real-time updates
-
-### 3. External Integrations
-- Spotify Web API
-- Billboard data (source TBD)
-- UMG catalog data
-
-## Development Roadmap
-
-### Phase 1: MVP Development (Current Focus)
-- Spotify authentication implementation
-- Dynamic album hand generation
-- Core gameplay mechanics
-- Computer opponent AI
-- Basic UI implementation
-
-### Phase 2: MVP Refinement
-- User testing and feedback
-- Performance optimization
-- Bug fixes and polish
-- Enhanced computer AI
-
-### Phase 3: Backend Infrastructure
-- User account system
-- Game state persistence
-- Matchmaking framework
-- API endpoints for game actions
-
-### Phase 4: PvP Implementation
-- Friend-to-friend challenges
-- Basic turn-based gameplay
-- Game invitations
-- Asynchronous play capabilities
-
-### Phase 5: Full Release
-- Random matchmaking
-- Leaderboards and rankings
-- Enhanced social features
-- Push notifications
-
-## Success Metrics
-
-### 1. User Engagement
-- Average session duration
-- Sessions per user per week
-- Retention rate (Day 1, Day 7, Day 30)
-
-### 2. Game Completion
-- Percentage of started games completed
-- Average time to complete a game
-- Win/loss ratio against computer
-
-### 3. Music Discovery
-- Number of new artists discovered
-- Clicks on "view in Spotify" links
-- Tracks added to playlists
-
-## Assumptions and Constraints
-
-### Assumptions
-- Users have active Spotify accounts with listening history
-- Spotify API will remain stable and accessible
-- Billboard data can be sourced reliably
-- UMG catalog data will be available for integration
-
-### Constraints
-- Spotify API rate limits
-- Limited access to streaming full tracks (preview only)
-- Mobile device performance considerations
-- Data privacy regulations
-
-## Appendices
-
-### Appendix A: Spotify API Documentation
-- [Authorization Guide](https://developer.spotify.com/documentation/web-api/concepts/authorization)
-- [Get Recently Played Tracks](https://developer.spotify.com/documentation/web-api/reference/get-recently-played)
-- [Get Album](https://developer.spotify.com/documentation/web-api/reference/get-an-album)
-
-### Appendix B: Album Hand Generation Logic
-See attached document: [Album Hand Logic](/home/ubuntu/umg-track-battle/album_hand_logic.md)
-
-### Appendix C: Computer Player Strategy
-See attached document: [Player 2 Strategy](/home/ubuntu/umg-track-battle/player2_strategy.md)
-
-### Appendix D: MVP Gameplay Loop
-See attached document: [MVP Gameplay Loop](/home/ubuntu/umg-track-battle/mvp_gameplay_loop.md)
+### 4. External Data Integration
+- Incorporate chart data (e.g., Billboard) for special rounds.

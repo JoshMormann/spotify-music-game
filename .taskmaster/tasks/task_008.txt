@@ -1,0 +1,41 @@
+# Task ID: 8
+# Title: Implement Computer Opponent Logic
+# Status: pending
+# Dependencies: 6, 7
+# Priority: medium
+# Description: Create a computer opponent for solo play that selects tracks based on the current prompt.
+# Details:
+Implement computer opponent with the following features:
+
+1. Computer player data structure:
+```typescript
+interface ComputerPlayer extends Player {
+  isComputer: true;
+  difficulty: 'easy' | 'medium' | 'hard';
+  decisionDelay: number; // ms to wait before making selection
+}
+```
+
+2. Hand generation for computer:
+   - Create static hand of 12 tracks from popular UMG catalog
+   - Ensure variety in genres, popularity, release dates
+   - Include tracks that would win for different prompt types
+
+3. Track selection logic based on difficulty:
+   - Easy: Random selection
+   - Medium: 50% chance of selecting optimal track, 50% random
+   - Hard: Always selects optimal track for prompt
+
+4. Selection algorithm:
+   - Analyze prompt's comparison type and direction
+   - Evaluate each track in hand against the prompt
+   - Select track based on difficulty setting
+   - Add slight delay to simulate "thinking"
+
+5. Visual representation:
+   - Create avatar/profile for computer player
+   - Show "thinking" animation during selection
+   - Reveal selected track after delay
+
+# Test Strategy:
+Test computer selection logic with various prompts and difficulty levels. Verify computer makes appropriate selections based on difficulty. Test timing of computer decisions. Verify computer's hand contains sufficient variety for different prompts. Test edge cases like ties and suboptimal hands.

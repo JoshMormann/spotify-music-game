@@ -1,0 +1,54 @@
+# Task ID: 4
+# Title: Implement Dynamic Hand Generation
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Create functionality to generate a player's hand of 12 tracks from their Spotify library based on recent listening or saved tracks.
+# Details:
+Implement hand generation service with the following features:
+
+1. Track selection algorithm:
+   - Fetch user's recently played tracks (up to 50)
+   - Fetch user's saved tracks (up to 50)
+   - Combine and deduplicate tracks
+   - Select 12 unique tracks prioritizing variety
+   - Ensure tracks have necessary metadata for game mechanics
+
+2. Fallback mechanism:
+   - If user has fewer than 12 tracks, supplement with popular tracks
+   - If API fails, use cached tracks when available
+   - Provide default tracks as last resort
+
+3. Hand refresh logic:
+   - Generate new hand at start of each game
+   - Allow manual refresh option
+   - Prevent duplicate hands in consecutive games
+
+4. Data structure for hand:
+```typescript
+interface Track {
+  id: string;
+  name: string;
+  artists: Array<{id: string, name: string}>;
+  album: {
+    id: string;
+    name: string;
+    images: Array<{url: string, width: number, height: number}>;
+  };
+  popularity: number;
+  duration_ms: number;
+  explicit: boolean;
+  release_date: string;
+  uri: string;
+  preview_url?: string;
+}
+
+interface Hand {
+  userId: string;
+  tracks: Track[];
+  generatedAt: Date;
+}
+```
+
+# Test Strategy:
+Test hand generation with various user library sizes. Verify fallback mechanisms work when insufficient tracks are available. Test hand refresh logic. Verify hand contains required data for game mechanics. Test with mock API responses and real Spotify data.

@@ -1,0 +1,45 @@
+# Task ID: 6
+# Title: Implement Core Gameplay Loop
+# Status: pending
+# Dependencies: 4, 5
+# Priority: high
+# Description: Create the main gameplay loop with rounds, prompts, track selection, comparison, and winner determination.
+# Details:
+Implement core gameplay loop with the following components:
+
+1. Round initialization:
+   - Select random prompt from prompt pool
+   - Display prompt to players
+   - Set round timer (if applicable)
+
+2. Track selection phase:
+   - Allow human player to select track from hand
+   - Computer player selects track based on prompt
+   - Display selected tracks
+
+3. Comparison logic:
+   - Implement comparison functions for each prompt type:
+     - popularity: Compare track.popularity values
+     - release_date: Compare track.release_date values
+     - duration: Compare track.duration_ms values
+     - title_length: Compare track.name.length values
+     - explicit: Check track.explicit flag
+     - featured_artists: Count track.artists.length
+   - Handle tie-breaking logic
+
+4. Round resolution:
+   - Determine winner based on comparison
+   - Update scores
+   - Display winning track with explanation
+   - Play winning track
+   - Add round to history
+
+5. Game progression:
+   - Check if any player has reached 10 points
+   - If yes, end game and declare winner
+   - If no, start new round with new prompt
+
+Implement tie handling by replaying the round with a new prompt.
+
+# Test Strategy:
+Test each comparison function with various track data. Verify correct winner determination for each prompt type. Test tie-breaking logic. Test game progression and end conditions. Verify round history is correctly maintained. Test with simulated gameplay scenarios.

@@ -45,9 +45,15 @@ class SpotifyService {
   static isTokenExpired() {
     const expiresIn = localStorage.getItem('spotify_token_expires_in');
     const tokenTimestamp = localStorage.getItem('spotify_token_timestamp');
-    if (!expiresIn || !tokenTimestamp) return true;
+    if (!expiresIn || !tokenTimestamp) {
+      console.debug('[SpotifyService] Token expiry check: missing expiresIn or tokenTimestamp', { expiresIn, tokenTimestamp });
+      return true;
+    }
     const now = Date.now();
-    return now > (parseInt(tokenTimestamp, 10) + parseInt(expiresIn, 10) * 1000);
+    const expiryTime = parseInt(tokenTimestamp, 10) + parseInt(expiresIn, 10) * 1000;
+    const expired = now > expiryTime;
+    console.debug('[SpotifyService] Token expiry check:', { now, tokenTimestamp, expiresIn, expiryTime, expired });
+    return expired;
   }
 
   // Refresh the access token using the refresh token
@@ -62,6 +68,8 @@ class SpotifyService {
     params.append('refresh_token', refreshToken);
     params.append('redirect_uri', redirectUri);
 
+    console.debug('[SpotifyService] Refreshing token with params:', { clientId, redirectUri, refreshToken });
+
     const response = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
@@ -72,21 +80,31 @@ class SpotifyService {
     });
 
     if (!response.ok) {
+      console.error('[SpotifyService] Failed to refresh token', response.status, await response.text());
       throw new Error('Failed to refresh token');
     }
     const data = await response.json();
     localStorage.setItem('spotify_access_token', data.access_token);
     localStorage.setItem('spotify_token_expires_in', data.expires_in);
     localStorage.setItem('spotify_token_timestamp', Date.now().toString());
+    console.debug('[SpotifyService] Token refreshed:', {
+      access_token: data.access_token,
+      expires_in: data.expires_in,
+      timestamp: Date.now(),
+      refresh_token: data.refresh_token || refreshToken,
+    });
     return data.access_token;
   }
 
   // Get a valid access token, refreshing if needed
   static async getValidAccessToken(redirectUri) {
     if (this.isTokenExpired()) {
+      console.debug('[SpotifyService] Access token expired, refreshing...');
       return await this.refreshToken(redirectUri);
     }
-    return localStorage.getItem('spotify_access_token');
+    const token = localStorage.getItem('spotify_access_token');
+    console.debug('[SpotifyService] Using valid access token:', token);
+    return token;
   }
 
   // Utility: Get Authorization header for API calls
@@ -215,6 +233,25 @@ class SpotifyService {
       const normalized = normalizeTrack(data);
       setCache(cacheKey, normalized, 3600); // Cache for 1 hour
       return normalized;
+    } catch (error) {
+      throw new Error(handleApiError(error.response, error));
+    }
+  }
+
+  // Fetch the current user's Spotify profile
+  async getMe(redirectUri) {
+    const endpoint = '/me';
+    const headers = await SpotifyService.getAuthHeader(redirectUri);
+    try {
+      const response = await SpotifyService.fetchWithRetry(
+        `${this.baseUrl}${endpoint}`,
+        { headers }
+      );
+      if (!response.ok) {
+        throw new Error(handleApiError(response));
+      }
+      const data = await response.json();
+      return data;
     } catch (error) {
       throw new Error(handleApiError(error.response, error));
     }
