@@ -1,6 +1,9 @@
 // src/services/spotify/SpotifyService.js
 // Service for interacting with the Spotify Web API
 
+import { makeCacheKey, getCache, setCache } from '../../utils/cache';
+import { normalizeTrack, normalizeAlbum } from '../../utils/spotifyNormalize';
+
 const MAX_RETRIES = 3;
 const INITIAL_BACKOFF = 1000; // 1 second
 
@@ -140,52 +143,78 @@ class SpotifyService {
     throw lastError || new Error('Failed to fetch after retries');
   }
 
-  // Fetch user's recently played tracks
+  // Fetch user's recently played tracks with normalization
   async getRecentlyPlayed(limit = 50, redirectUri) {
+    const endpoint = '/me/player/recently-played';
+    const params = { limit };
+    const cacheKey = makeCacheKey(endpoint, params);
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
     const headers = await SpotifyService.getAuthHeader(redirectUri);
     try {
       const response = await SpotifyService.fetchWithRetry(
-        `${this.baseUrl}/me/player/recently-played?limit=${limit}`,
+        `${this.baseUrl}${endpoint}?limit=${limit}`,
         { headers }
       );
       if (!response.ok) {
         throw new Error(handleApiError(response));
       }
-      return response.json();
+      const data = await response.json();
+      // Normalize tracks
+      const normalized = {
+        ...data,
+        items: (data.items || []).map(item => ({ ...item, track: normalizeTrack(item.track) })),
+      };
+      setCache(cacheKey, normalized, 60); // Cache for 60 seconds
+      return normalized;
     } catch (error) {
       throw new Error(handleApiError(error.response, error));
     }
   }
 
-  // Fetch album details by ID
+  // Fetch album details by ID with normalization
   async getAlbum(albumId, redirectUri) {
+    const endpoint = `/albums/${albumId}`;
+    const cacheKey = makeCacheKey(endpoint);
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
     const headers = await SpotifyService.getAuthHeader(redirectUri);
     try {
       const response = await SpotifyService.fetchWithRetry(
-        `${this.baseUrl}/albums/${albumId}`,
+        `${this.baseUrl}${endpoint}`,
         { headers }
       );
       if (!response.ok) {
         throw new Error(handleApiError(response));
       }
-      return response.json();
+      const data = await response.json();
+      const normalized = normalizeAlbum(data);
+      setCache(cacheKey, normalized, 3600); // Cache for 1 hour
+      return normalized;
     } catch (error) {
       throw new Error(handleApiError(error.response, error));
     }
   }
 
-  // Fetch track details by ID
+  // Fetch track details by ID with normalization
   async getTrack(trackId, redirectUri) {
+    const endpoint = `/tracks/${trackId}`;
+    const cacheKey = makeCacheKey(endpoint);
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
     const headers = await SpotifyService.getAuthHeader(redirectUri);
     try {
       const response = await SpotifyService.fetchWithRetry(
-        `${this.baseUrl}/tracks/${trackId}`,
+        `${this.baseUrl}${endpoint}`,
         { headers }
       );
       if (!response.ok) {
         throw new Error(handleApiError(response));
       }
-      return response.json();
+      const data = await response.json();
+      const normalized = normalizeTrack(data);
+      setCache(cacheKey, normalized, 3600); // Cache for 1 hour
+      return normalized;
     } catch (error) {
       throw new Error(handleApiError(error.response, error));
     }

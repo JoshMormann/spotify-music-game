@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import LoginButton from '../components/common/LoginButton';
 import SpotifyService from '../services/spotify/SpotifyService';
+import { getBestImage, formatDuration } from '../utils/spotifyNormalize';
 
 const redirectUri = 'https://127.0.0.1:5173/callback';
 
@@ -72,10 +73,13 @@ const Home = () => {
           {error && <div style={{ color: 'red' }}>{error}</div>}
           <ul>
             {recentTracks.map((item, idx) => (
-              <li key={item.track.id || idx}>
+              <li key={item.track.id || idx} style={{ marginBottom: 12 }}>
                 <button onClick={() => handleAlbumClick(item.track.album.id)} style={{ cursor: 'pointer', background: 'none', border: 'none', color: '#1DB954', textDecoration: 'underline', padding: 0 }}>
                   {item.track.name} — {item.track.artists.map(a => a.name).join(', ')}
                 </button>
+                <span style={{ marginLeft: 8, color: '#888' }}>
+                  ({formatDuration(item.track.durationMs)}, Popularity: {item.track.popularity})
+                </span>
               </li>
             ))}
           </ul>
@@ -86,11 +90,12 @@ const Home = () => {
       {albumDetails && (
         <div style={{ marginTop: '2rem', border: '1px solid #ccc', borderRadius: 8, padding: '1rem', maxWidth: 400 }}>
           <h4>{albumDetails.name}</h4>
-          <div>Release Date: {albumDetails.release_date}</div>
-          {albumDetails.images && albumDetails.images[0] && (
-            <img src={albumDetails.images[0].url} alt={albumDetails.name} style={{ width: 200, marginTop: 8 }} />
+          <div>Release Date: {albumDetails.releaseDate}</div>
+          {getBestImage(albumDetails.images) && (
+            <img src={getBestImage(albumDetails.images).url} alt={albumDetails.name} style={{ width: 200, marginTop: 8 }} />
           )}
           <div>Tracks: {albumDetails.tracks?.items?.length || 0}</div>
+          <div>Popularity: {albumDetails.popularity}</div>
         </div>
       )}
       {isAuthenticated && (
