@@ -10,6 +10,10 @@ const Home = () => {
   const [recentTracks, setRecentTracks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [albumDetails, setAlbumDetails] = useState(null);
+  const [albumLoading, setAlbumLoading] = useState(false);
+  const [albumError, setAlbumError] = useState(null);
+  const [testError, setTestError] = useState(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -26,6 +30,30 @@ const Home = () => {
         });
     }
   }, [isAuthenticated]);
+
+  const handleAlbumClick = (albumId) => {
+    setAlbumLoading(true);
+    setAlbumError(null);
+    setAlbumDetails(null);
+    const service = new SpotifyService();
+    service.getAlbum(albumId, redirectUri)
+      .then(data => {
+        setAlbumDetails(data);
+        setAlbumLoading(false);
+      })
+      .catch(err => {
+        setAlbumError('Failed to fetch album details.');
+        setAlbumLoading(false);
+      });
+  };
+
+  const handleTestError = () => {
+    setTestError(null);
+    const service = new SpotifyService();
+    service.getAlbum('invalid_album_id', redirectUri)
+      .then(() => setTestError('Unexpected success!'))
+      .catch(err => setTestError(err.message));
+  };
 
   return (
     <div>
@@ -45,10 +73,32 @@ const Home = () => {
           <ul>
             {recentTracks.map((item, idx) => (
               <li key={item.track.id || idx}>
-                {item.track.name} — {item.track.artists.map(a => a.name).join(', ')}
+                <button onClick={() => handleAlbumClick(item.track.album.id)} style={{ cursor: 'pointer', background: 'none', border: 'none', color: '#1DB954', textDecoration: 'underline', padding: 0 }}>
+                  {item.track.name} — {item.track.artists.map(a => a.name).join(', ')}
+                </button>
               </li>
             ))}
           </ul>
+        </div>
+      )}
+      {albumLoading && <div>Loading album details...</div>}
+      {albumError && <div style={{ color: 'red' }}>{albumError}</div>}
+      {albumDetails && (
+        <div style={{ marginTop: '2rem', border: '1px solid #ccc', borderRadius: 8, padding: '1rem', maxWidth: 400 }}>
+          <h4>{albumDetails.name}</h4>
+          <div>Release Date: {albumDetails.release_date}</div>
+          {albumDetails.images && albumDetails.images[0] && (
+            <img src={albumDetails.images[0].url} alt={albumDetails.name} style={{ width: 200, marginTop: 8 }} />
+          )}
+          <div>Tracks: {albumDetails.tracks?.items?.length || 0}</div>
+        </div>
+      )}
+      {isAuthenticated && (
+        <div style={{ marginTop: '2rem' }}>
+          <button onClick={handleTestError} style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 4, padding: '0.5rem 1rem', cursor: 'pointer' }}>
+            Test Error Handling (Invalid Album)
+          </button>
+          {testError && <div style={{ color: 'red', marginTop: 8 }}>{testError}</div>}
         </div>
       )}
     </div>

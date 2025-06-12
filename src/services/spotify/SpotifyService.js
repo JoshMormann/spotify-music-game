@@ -1,6 +1,32 @@
 // src/services/spotify/SpotifyService.js
 // Service for interacting with the Spotify Web API
 
+const MAX_RETRIES = 3;
+const INITIAL_BACKOFF = 1000; // 1 second
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function handleApiError(response, error) {
+  if (response && response.status === 429) {
+    return 'Rate limit exceeded. Retrying...';
+  }
+  if (response && response.status === 401) {
+    return 'Unauthorized. Please log in again.';
+  }
+  if (response && response.status === 403) {
+    return 'Access denied.';
+  }
+  if (response && response.status === 404) {
+    return 'Resource not found.';
+  }
+  if (error && error.message) {
+    return error.message;
+  }
+  return 'An unknown error occurred.';
+}
+
 class SpotifyService {
   constructor(accessToken) {
     this.accessToken = accessToken;
@@ -60,6 +86,12 @@ class SpotifyService {
     return localStorage.getItem('spotify_access_token');
   }
 
+  // Utility: Get Authorization header for API calls
+  static async getAuthHeader(redirectUri) {
+    const token = await this.getValidAccessToken(redirectUri);
+    return { Authorization: `Bearer ${token}` };
+  }
+
   // Exchange authorization code for tokens
   static async exchangeCodeForToken(code, redirectUri) {
     const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
@@ -87,32 +119,76 @@ class SpotifyService {
     return data;
   }
 
+  // Helper for fetch with retry on 429
+  static async fetchWithRetry(url, options, retries = MAX_RETRIES, backoff = INITIAL_BACKOFF) {
+    let lastError = null;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      const response = await fetch(url, options);
+      if (response.status === 429) {
+        // Rate limited, exponential backoff
+        const retryAfter = response.headers.get('Retry-After');
+        const wait = retryAfter ? parseInt(retryAfter, 10) * 1000 : backoff * Math.pow(2, attempt);
+        await sleep(wait);
+        continue;
+      }
+      if (!response.ok) {
+        lastError = response;
+        break;
+      }
+      return response;
+    }
+    throw lastError || new Error('Failed to fetch after retries');
+  }
+
   // Fetch user's recently played tracks
   async getRecentlyPlayed(limit = 50, redirectUri) {
-    const accessToken = await SpotifyService.getValidAccessToken(redirectUri);
-    const response = await fetch(`${this.baseUrl}/me/player/recently-played?limit=${limit}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch recently played tracks');
+    const headers = await SpotifyService.getAuthHeader(redirectUri);
+    try {
+      const response = await SpotifyService.fetchWithRetry(
+        `${this.baseUrl}/me/player/recently-played?limit=${limit}`,
+        { headers }
+      );
+      if (!response.ok) {
+        throw new Error(handleApiError(response));
+      }
+      return response.json();
+    } catch (error) {
+      throw new Error(handleApiError(error.response, error));
     }
-    return response.json();
   }
 
-  // Placeholder: Fetch album details by ID
-  async getAlbum(albumId) {
-    // TODO: Implement API call
-    // Endpoint: GET /albums/{id}
-    return null;
+  // Fetch album details by ID
+  async getAlbum(albumId, redirectUri) {
+    const headers = await SpotifyService.getAuthHeader(redirectUri);
+    try {
+      const response = await SpotifyService.fetchWithRetry(
+        `${this.baseUrl}/albums/${albumId}`,
+        { headers }
+      );
+      if (!response.ok) {
+        throw new Error(handleApiError(response));
+      }
+      return response.json();
+    } catch (error) {
+      throw new Error(handleApiError(error.response, error));
+    }
   }
 
-  // Placeholder: Fetch track details by ID
-  async getTrack(trackId) {
-    // TODO: Implement API call
-    // Endpoint: GET /tracks/{id}
-    return null;
+  // Fetch track details by ID
+  async getTrack(trackId, redirectUri) {
+    const headers = await SpotifyService.getAuthHeader(redirectUri);
+    try {
+      const response = await SpotifyService.fetchWithRetry(
+        `${this.baseUrl}/tracks/${trackId}`,
+        { headers }
+      );
+      if (!response.ok) {
+        throw new Error(handleApiError(response));
+      }
+      return response.json();
+    } catch (error) {
+      throw new Error(handleApiError(error.response, error));
+    }
   }
 
   // Add more methods as needed
